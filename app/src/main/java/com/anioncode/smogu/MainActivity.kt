@@ -1,10 +1,11 @@
 package com.anioncode.smogu
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.opengl.Visibility
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,7 +17,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -65,13 +65,25 @@ class MainActivity : AppCompatActivity() {
                 // Permission to access the location is missing. Show rationale and request permission
                 val Poland = LatLngBounds(LatLng(48.0, 13.0), LatLng(55.0, 25.0))
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(Poland, 0))
-                pulsator.stop()
-                RelativeLoader.visibility = View.GONE
+
+                Handler().postDelayed(Runnable {
+                    pulsator.stop()
+                    RelativeLoader.visibility = View.GONE
+
+                }, 1000)
+
             })
 
 
         })
-
+        fab.setOnClickListener(
+            View.OnClickListener {
+                val Poland = LatLngBounds(LatLng(48.0, 13.0), LatLng(55.0, 25.0))
+                val location = CameraUpdateFactory.newLatLngBounds(Poland, 0)
+                // googleMap.moveCamera(location)
+                googleMap.animateCamera(location);
+            }
+        )
     }
 }
 
