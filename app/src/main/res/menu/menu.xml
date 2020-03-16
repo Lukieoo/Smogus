@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/main"
+        android:icon="@drawable/chart"
+        android:title="Statystyki"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/maps"
+        android:icon="@drawable/maps"
+        android:title="Mapa"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/info"
+        android:icon="@drawable/info"
+        android:title="info"
+        app:showAsAction="ifRoom"></item>
+</menu>

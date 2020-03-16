@@ -3,7 +3,9 @@ package com.anioncode.smogu
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.opengl.Visibility
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -15,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,10 +37,13 @@ class MainActivity : AppCompatActivity() {
                 200
             )
         }
+
+        pulsator.start()
+
         mapFragment = supportFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
-            googleMap.isMyLocationEnabled=true
+            googleMap.isMyLocationEnabled = true
             try {
                 val success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
@@ -57,14 +63,14 @@ class MainActivity : AppCompatActivity() {
             googleMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
 
                 // Permission to access the location is missing. Show rationale and request permission
-             //   val AUSTRALIA = LatLngBounds(LatLng(-44.0, 113.0), LatLng(-10.0, 154.0))
-               // googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(AUSTRALIA, 0))
-
+                val Poland = LatLngBounds(LatLng(48.0, 13.0), LatLng(55.0, 25.0))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(Poland, 0))
+                pulsator.stop()
+                RelativeLoader.visibility = View.GONE
             })
 
 
         })
-
 
     }
 }
