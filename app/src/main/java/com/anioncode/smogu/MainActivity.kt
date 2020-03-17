@@ -21,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,39 +32,34 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
+    lateinit var stationList: List<FindAll>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //variable
         val Poland = LatLngBounds(LatLng(48.0, 14.0), LatLng(57.5, 24.3))
-
-
-        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-        api.findAll().enqueue(object : Callback<List<FindAll>> {
-            override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
-                Log.d("MainActivity1313:Code ", "Call ok ${response.body()}")
-            }
-
-            override fun onFailure(call: Call<List<FindAll>>, t: Throwable) {
-                Log.d("MainActivity1313:Code ", "Call  ${t.message}")
-            }
-
-
-        })
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                200
-            )
-        }
-
         pulsator.start()
 
+
+        getDataFromApi()
+
+        setPermission()
+
+        setMapFragment(Poland)
+
+        fab.setOnClickListener(
+            View.OnClickListener {
+                val location = CameraUpdateFactory.newLatLngBounds(Poland, 0)
+                // googleMap.moveCamera(location)
+                googleMap.animateCamera(location);
+            }
+        )
+
+    }
+
+    private fun setMapFragment(Poland: LatLngBounds) {
         mapFragment = supportFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
@@ -77,9 +73,11 @@ class MainActivity : AppCompatActivity() {
                 if (!success) {
 
                 }
+
             } catch (e: Resources.NotFoundException) {
 
             }
+
 
 
             googleMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
@@ -96,13 +94,39 @@ class MainActivity : AppCompatActivity() {
 
 
         })
-        fab.setOnClickListener(
-            View.OnClickListener {
-                val location = CameraUpdateFactory.newLatLngBounds(Poland, 0)
-                // googleMap.moveCamera(location)
-                googleMap.animateCamera(location);
+    }
+
+    private fun setPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                200
+            )
+        }
+    }
+
+    private fun getDataFromApi() {
+        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+        api.findAll().enqueue(object : Callback<List<FindAll>> {
+            override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
+
+                stationList= response.body()!!
+
+                for (FindAll in stationList){
+                    val location=LatLng(FindAll.gegrLat.toDouble(),FindAll.gegrLon.toDouble())
+                    googleMap.addMarker(MarkerOptions().position(location).title("this"))
+                }
             }
-        )
+
+            override fun onFailure(call: Call<List<FindAll>>, t: Throwable) {
+                Log.d("MainActivity1313:Code ", "Call  ${t.message}")
+            }
+
+
+        })
     }
 }
 
