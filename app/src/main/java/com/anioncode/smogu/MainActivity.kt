@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.ModelAll.FindAll
+import com.anioncode.smogu.ModelSensor.SensorsName
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity(){
         //variable
         val Poland = LatLngBounds(LatLng(48.0, 14.0), LatLng(57.5, 24.3))
         pulsator.start()
+
 
 
         getDataFromApi()
@@ -121,6 +123,18 @@ class MainActivity : AppCompatActivity(){
 
                 for (FindAll in stationList) {
 
+                  //  val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+                    api.getData(FindAll.id.toString()).enqueue(object : Callback<List<SensorsName>> {
+                        override fun onResponse(call: Call<List<SensorsName>>, response: Response<List<SensorsName>>) {
+                            Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
+
+                        }
+
+                        override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
+                            Log.d("MainActivity1313:Code ", "Call  ${t.message}")
+                        }
+
+                    })
 //                    var icon: BitmapDescriptor? =
 //                        BitmapDescriptorFactory.fromResource(R.drawable.circle)
                     val location = LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
@@ -145,17 +159,8 @@ class MainActivity : AppCompatActivity(){
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
         var vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-        vectorDrawable!!.setBounds(
-            0,
-            0,
-            vectorDrawable.getIntrinsicWidth(),
-            vectorDrawable.getIntrinsicHeight()
-        );
-        var bitmap = Bitmap.createBitmap(
-            vectorDrawable.getIntrinsicWidth(),
-            vectorDrawable.getIntrinsicHeight(),
-            Bitmap.Config.ARGB_8888
-        );
+        vectorDrawable!!.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        var bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         var canvas = Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
