@@ -1,9 +1,13 @@
 package com.anioncode.smogu
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -18,10 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -78,7 +79,10 @@ class MainActivity : AppCompatActivity() {
 
             }
 
+          //  googleMap.setMaxZoomPreference(17.0f)
+          //  googleMap.maxZoomLevel
 
+            googleMap.setMinZoomPreference(5.4f)
 
             googleMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
 
@@ -113,11 +117,20 @@ class MainActivity : AppCompatActivity() {
         api.findAll().enqueue(object : Callback<List<FindAll>> {
             override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
 
-                stationList= response.body()!!
+                stationList = response.body()!!
 
-                for (FindAll in stationList){
-                    val location=LatLng(FindAll.gegrLat.toDouble(),FindAll.gegrLon.toDouble())
-                    googleMap.addMarker(MarkerOptions().position(location).title("this"))
+                for (FindAll in stationList) {
+
+//                    var icon: BitmapDescriptor? =
+//                        BitmapDescriptorFactory.fromResource(R.drawable.circle)
+                    val location = LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                    googleMap.addMarker(
+                        MarkerOptions().position(location).title(FindAll.stationName).icon(
+                            bitmapDescriptorFromVector(this@MainActivity, R.drawable.circle)
+                        )
+                    )
+
+
                 }
             }
 
@@ -128,6 +141,25 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
+
+    private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
+        var vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable!!.setBounds(
+            0,
+            0,
+            vectorDrawable.getIntrinsicWidth(),
+            vectorDrawable.getIntrinsicHeight()
+        );
+        var bitmap = Bitmap.createBitmap(
+            vectorDrawable.getIntrinsicWidth(),
+            vectorDrawable.getIntrinsicHeight(),
+            Bitmap.Config.ARGB_8888
+        );
+        var canvas = Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
 }
 
 
