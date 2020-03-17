@@ -29,7 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
@@ -141,6 +141,7 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
+
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
         var vectorDrawable = ContextCompat.getDrawable(context, vectorResId);

@@ -8,7 +8,7 @@
         app:showAsAction="ifRoom"></item>
     <item
         android:id="@+id/maps"
-        android:icon="@drawable/maps"
+        android:icon="@drawable/city"
         android:title="Mapa"
         app:showAsAction="ifRoom"></item>
     <item
