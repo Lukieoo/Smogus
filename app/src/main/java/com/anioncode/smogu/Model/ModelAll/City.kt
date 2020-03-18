@@ -1,4 +1,4 @@
-package com.anioncode.smogu.ModelAll
+package com.anioncode.smogu.Model.ModelAll
 
 data class City(
     val commune: Commune,

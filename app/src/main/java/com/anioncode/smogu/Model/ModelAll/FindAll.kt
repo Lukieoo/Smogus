@@ -1,4 +1,4 @@
-package com.anioncode.smogu.ModelAll
+package com.anioncode.smogu.Model.ModelAll
 
 data class FindAll(
     val addressStreet: String,

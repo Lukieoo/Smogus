@@ -1,0 +1,31 @@
+package com.anioncode.smogu.Model.ModelIndex
+
+data class ModelIndex(
+    val c6h6CalcDate: String,
+    val c6h6IndexLevel: C6h6IndexLevel,
+    val c6h6SourceDataDate: String,
+    val coCalcDate: String,
+    val coIndexLevel: CoIndexLevel,
+    val coSourceDataDate: String,
+    val id: Int,
+    val no2CalcDate: Long,
+    val no2IndexLevel: No2IndexLevel,
+    val no2SourceDataDate: String,
+    val o3CalcDate: String,
+    val o3IndexLevel: O3IndexLevel,
+    val o3SourceDataDate: String,
+    val pm10CalcDate: String,
+    val pm10IndexLevel: Pm10IndexLevel,
+    val pm10SourceDataDate: String,
+    val pm25CalcDate: String,
+    val pm25IndexLevel: Any,
+    val pm25SourceDataDate: Any,
+    val so2CalcDate: String,
+    val so2IndexLevel: So2IndexLevel,
+    val so2SourceDataDate: String,
+    val stCalcDate: String,
+    val stIndexCrParam: String,
+    val stIndexLevel: StIndexLevel,
+    val stIndexStatus: Boolean,
+    val stSourceDataDate: String
+)

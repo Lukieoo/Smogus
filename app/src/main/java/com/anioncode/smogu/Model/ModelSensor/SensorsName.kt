@@ -1,4 +1,4 @@
-package com.anioncode.smogu.ModelSensor
+package com.anioncode.smogu.Model.ModelSensor
 
 data class SensorsName(
     val id: Int,

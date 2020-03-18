@@ -2,12 +2,12 @@ package com.anioncode.smogu
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -17,8 +17,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
-import com.anioncode.smogu.ModelAll.FindAll
-import com.anioncode.smogu.ModelSensor.SensorsName
+import com.anioncode.smogu.Model.ModelAll.FindAll
+import com.anioncode.smogu.Model.ModelIndex.ModelIndex
+import com.anioncode.smogu.Model.ModelSensor.SensorsName
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -30,16 +31,18 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
     lateinit var stationList: List<FindAll>
+    lateinit var sensorsNameList: List<SensorsName>
+    lateinit var modelIndexList: ArrayList<ModelIndex>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        modelIndexList = ArrayList<ModelIndex>()
         //variable
         val Poland = LatLngBounds(LatLng(48.0, 14.0), LatLng(57.5, 24.3))
         pulsator.start()
@@ -81,8 +84,8 @@ class MainActivity : AppCompatActivity(){
 
             }
 
-          //  googleMap.setMaxZoomPreference(17.0f)
-          //  googleMap.maxZoomLevel
+            //  googleMap.setMaxZoomPreference(17.0f)
+            //  googleMap.maxZoomLevel
 
             googleMap.setMinZoomPreference(5.4f)
 
@@ -123,33 +126,87 @@ class MainActivity : AppCompatActivity(){
 
                 for (FindAll in stationList) {
 
-                  //  val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-                    api.getData(FindAll.id.toString()).enqueue(object : Callback<List<SensorsName>> {
-                        override fun onResponse(call: Call<List<SensorsName>>, response: Response<List<SensorsName>>) {
-                            Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
+                    api.getIndex(FindAll.id.toString()).enqueue(object : Callback<ModelIndex> {
+                        override fun onResponse(
+                            call: Call<ModelIndex>,
+                            response: Response<ModelIndex>
+                        ) {
+                            //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
+                            var drawable: Int=R.drawable.circle
+                            modelIndexList.add(response.body()!!)
 
+
+                            if (response.body()!!.pm10IndexLevel != null) {
+                                when (response.body()!!.pm10IndexLevel.id) {
+                                    0 -> {
+                                        drawable = R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable = R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable = R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable = R.drawable.circle4
+                                    }
+                                    else -> {
+                                        drawable = R.drawable.circle
+                                    }
+                                }
+                            }
+
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (response.body()!!.pm10IndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(response.body()!!.pm10IndexLevel.indexLevelName).icon(
+                                        bitmapDescriptorFromVector(
+                                            this@MainActivity,
+                                            drawable
+                                        )
+                                    )
+                                )
+                            }
+
+
+                            Log.d("MainActivity8383:Code ", "Call  ${response.body()!!}")
                         }
 
-                        override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
-                            Log.d("MainActivity1313:Code ", "Call  ${t.message}")
+                        override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
+                            Log.d("MainActivity1313x:Code ", "Call  ${t.message}")
                         }
 
                     })
+
+                    //  val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+//                    api.getData(FindAll.id.toString())
+//                        .enqueue(object : Callback<List<SensorsName>> {
+//                            override fun onResponse(
+//                                call: Call<List<SensorsName>>,
+//                                response: Response<List<SensorsName>>
+//                            ) {
+//                                //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
+//
+//                                sensorsNameList = response.body()!!
+//
+//                            }
+//
+//                            override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
+//                                Log.d("MainActivity1313:Code ", "Call  ${t.message}")
+//                            }
+//
+//                        })
 //                    var icon: BitmapDescriptor? =
 //                        BitmapDescriptorFactory.fromResource(R.drawable.circle)
-                    val location = LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
-                    googleMap.addMarker(
-                        MarkerOptions().position(location).title(FindAll.stationName).icon(
-                            bitmapDescriptorFromVector(this@MainActivity, R.drawable.circle)
-                        )
-                    )
 
 
                 }
             }
 
             override fun onFailure(call: Call<List<FindAll>>, t: Throwable) {
-                Log.d("MainActivity1313:Code ", "Call  ${t.message}")
+                Log.d("MainActivity1313Code", "Call  ${t.message}")
             }
 
 
@@ -159,8 +216,17 @@ class MainActivity : AppCompatActivity(){
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
         var vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-        vectorDrawable!!.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-        var bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        vectorDrawable!!.setBounds(
+            0,
+            0,
+            vectorDrawable.getIntrinsicWidth(),
+            vectorDrawable.getIntrinsicHeight()
+        );
+        var bitmap = Bitmap.createBitmap(
+            vectorDrawable.getIntrinsicWidth(),
+            vectorDrawable.getIntrinsicHeight(),
+            Bitmap.Config.ARGB_8888
+        );
         var canvas = Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
