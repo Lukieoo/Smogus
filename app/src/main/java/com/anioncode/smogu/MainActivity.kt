@@ -93,11 +93,11 @@ class MainActivity : AppCompatActivity() {
 
                 // Permission to access the location is missing. Show rationale and request permission
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(Poland, 0))
-                Handler().postDelayed(Runnable {
-                    pulsator.stop()
-                    RelativeLoader.visibility = View.GONE
-
-                }, 1000)
+//                Handler().postDelayed(Runnable {
+//                    pulsator.stop()
+//                    RelativeLoader.visibility = View.GONE
+//
+//                }, 1000)
 
             })
 
@@ -124,18 +124,17 @@ class MainActivity : AppCompatActivity() {
 
                 stationList = response.body()!!
 
+                var iterator = 0;
                 for (FindAll in stationList) {
-
                     api.getIndex(FindAll.id.toString()).enqueue(object : Callback<ModelIndex> {
 
                         override fun onResponse(
                             call: Call<ModelIndex>,
                             response: Response<ModelIndex>
-                        )
-                        {
+                        ) {
 
                             //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
-                            var drawable: Int=R.drawable.circle
+                            var drawable: Int = R.drawable.circle
                             modelIndexList.add(response.body()!!)
 
 
@@ -179,6 +178,7 @@ class MainActivity : AppCompatActivity() {
 
                         override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
                             Log.d("MainActivity1313x:Code ", "Call  ${t.message}")
+
                         }
 
                     })
@@ -204,12 +204,22 @@ class MainActivity : AppCompatActivity() {
 //                    var icon: BitmapDescriptor? =
 //                        BitmapDescriptorFactory.fromResource(R.drawable.circle)
 
+                    iterator++;
+                    if (iterator == stationList.size) {
+                        Handler().postDelayed(Runnable {
+                            pulsator.stop()
+                            RelativeLoader.visibility = View.GONE
 
+                        }, 1500)
+                    }
                 }
+
             }
 
             override fun onFailure(call: Call<List<FindAll>>, t: Throwable) {
                 Log.d("MainActivity1313Code", "Call  ${t.message}")
+                pulsator.stop()
+                RelativeLoader.visibility = View.GONE
             }
 
 

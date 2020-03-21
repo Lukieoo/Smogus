@@ -15,17 +15,17 @@ class SpashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_spash_screen)
 
+//
 
-        var intent: Intent = Intent(this@SpashScreen, DashActivity::class.java)
-        startActivity(intent)
-        finish()
         splash.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationRepeat(p0: Animator?) {
 
             }
 
             override fun onAnimationEnd(p0: Animator?) {
-
+                var intent: Intent = Intent(this@SpashScreen, DashActivity::class.java)
+                startActivity(intent)
+                finish()
             }
 
             override fun onAnimationCancel(p0: Animator?) {

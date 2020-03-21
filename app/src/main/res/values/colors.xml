@@ -9,4 +9,6 @@
     <color name="colorPrimaryDark">#102027</color>
     <color name="colorAccent">#62727b</color>
     <color name="colorWhite">#ffffff</color>
+
+    <color name="colorGreen">#43a047</color>
 </resources>
