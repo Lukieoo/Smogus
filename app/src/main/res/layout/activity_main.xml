@@ -81,12 +81,12 @@
         style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/colorWhite"
 
         app:borderWidth="0dp"
 
         app:layout_anchor="@id/bar"
         app:srcCompat="@drawable/poland"
-        app:tint="@null" />
-
+         />
+<!--    app:tint="@null"-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

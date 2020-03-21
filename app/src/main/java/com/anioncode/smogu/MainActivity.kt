@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         modelIndexList = ArrayList<ModelIndex>()
         //variable
-        val Poland = LatLngBounds(LatLng(48.0, 14.0), LatLng(57.5, 24.3))
+        val Poland = LatLngBounds(LatLng(47.0, 14.0), LatLng(56.5, 24.3))
         pulsator.start()
 
 
