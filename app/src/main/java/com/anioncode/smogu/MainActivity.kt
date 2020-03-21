@@ -127,10 +127,13 @@ class MainActivity : AppCompatActivity() {
                 for (FindAll in stationList) {
 
                     api.getIndex(FindAll.id.toString()).enqueue(object : Callback<ModelIndex> {
+
                         override fun onResponse(
                             call: Call<ModelIndex>,
                             response: Response<ModelIndex>
-                        ) {
+                        )
+                        {
+
                             //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
                             var drawable: Int=R.drawable.circle
                             modelIndexList.add(response.body()!!)
