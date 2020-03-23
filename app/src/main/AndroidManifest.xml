@@ -13,19 +13,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DashActivity"></activity>
-        <activity android:name=".SpashScreen">
+        <activity android:name=".Activity.DashActivity"></activity>
+
+        <activity android:name=".nulled.MainActivity" />
+        <activity android:name=".Activity.SpashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".nulled.MainActivity">
-        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA1DXfvoGo05evsW5oL7K8g08eNIr-uZu4" />
+
+        <activity-alias
+            android:name=".nulled.MainActivity"
+            android:targetActivity=".Activity.SpashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
     </application>
 
 </manifest>

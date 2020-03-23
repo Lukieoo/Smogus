@@ -1,7 +1,6 @@
-package com.anioncode.smogu
+package com.anioncode.smogu.Fragments
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
@@ -20,16 +19,20 @@ import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Model.ModelAll.FindAll
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
-import com.anioncode.smogu.Model.ModelSensor.SensorsName
-import com.anioncode.smogu.MyVariables.Companion.modelIndexList
-import com.anioncode.smogu.MyVariables.Companion.stationList
+import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
+import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
+import com.anioncode.smogu.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.RelativeLoader
 import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.activity_main.view.fab
+import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.android.synthetic.main.fragment_map.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,10 +44,11 @@ class MapFragment : Fragment() {
 
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
-//    lateinit var stationList: List<FindAll>
+    //    lateinit var stationList: List<FindAll>
 //    lateinit var sensorsNameList: List<SensorsName>
 //    lateinit var modelIndexList: ArrayList<ModelIndex>
     var iterator = 0;
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,12 +60,13 @@ class MapFragment : Fragment() {
         //variable
         val Poland = LatLngBounds(LatLng(47.0, 14.0), LatLng(56.5, 24.3))
 
-        if (modelIndexList.size ==0){
+        if (modelIndexList.size == 0) {
+            view.progress.visibility=View.VISIBLE
             getDataFromApi()
             setPermission()
             setMapFragment(Poland)
 
-        }else{
+        } else {
             setPermission()
             setMapFragment(Poland)
 
@@ -143,6 +148,7 @@ class MapFragment : Fragment() {
     }
 
     private fun getDataFromApi() {
+
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         api.findAll().enqueue(object : Callback<List<FindAll>> {
             override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
@@ -167,13 +173,17 @@ class MapFragment : Fragment() {
                             Log.d("MainActivity8383:Code ", "Call  ${response.body()!!}")
                             iterator++;
                             println(iterator)
-                            if (iterator==stationList.size){
+                            if (iterator == stationList.size) {
                                 getAllData();
-                              //  Handler().postDelayed(Runnable {
+                                //  Handler().postDelayed(Runnable {
 
-                                    RelativeLoader.visibility = View.GONE
+                                RelativeLoader.visibility = View.GONE
 
-                              //  }, 0)
+                                //  }, 0)
+                            }
+                            var pr:Double= Math.round(iterator/stationList.size.toDouble()*100.0).toDouble()
+                            activity?.runOnUiThread {
+                                progress.text= pr.toInt().toString()+"%";
                             }
                         }
 

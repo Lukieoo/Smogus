@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".DashFragment">
+    tools:context=".Fragments.DashFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <ScrollView
@@ -12,7 +12,7 @@
     android:layout_height="match_parent"
     android:layout_below="@+id/toolbar"
     android:padding="20dp"
-    tools:context=".DashActivity">
+    tools:context=".Activity.DashActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

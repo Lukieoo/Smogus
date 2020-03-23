@@ -1,4 +1,4 @@
-package com.anioncode.smogu
+package com.anioncode.smogu.CONST
 
 import com.anioncode.smogu.Model.ModelAll.FindAll
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex

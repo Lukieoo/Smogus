@@ -1,12 +1,10 @@
-package com.anioncode.smogu
+package com.anioncode.smogu.Activity
 
 import android.animation.Animator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
-import com.airbnb.lottie.LottieAnimationView
+import com.anioncode.smogu.R
 import kotlinx.android.synthetic.main.activity_spash_screen.*
 
 class SpashScreen : AppCompatActivity() {
