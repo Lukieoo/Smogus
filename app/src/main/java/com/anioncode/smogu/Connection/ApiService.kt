@@ -17,7 +17,7 @@ interface ApiService {
     fun getData(@Path("stationId") endpoint: String?): Call<List<SensorsName>>
 
     @GET("data/getData/{sensorId}")
-    fun getSensor(@Path("sensorId") endpoint: String?): Call<List<SensorbyID>>
+    fun getSensor(@Path("sensorId") endpoint: String?): Call<SensorbyID>
 
     @GET("aqindex/getIndex/{stationId}")
     fun getIndex(@Path("stationId") endpoint: String?): Call<ModelIndex>
