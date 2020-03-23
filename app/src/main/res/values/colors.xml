@@ -11,4 +11,12 @@
     <color name="colorWhite">#ffffff</color>
 
     <color name="colorGreen">#43a047</color>
+
+
+    <color name="colorbdb">#a17cb342</color>
+    <color name="colordb">#a19ccc65</color>
+    <color name="colordst">#a1ffca28</color>
+    <color name="colordop">#a1ffa726</color>
+    <color name="colorndst">#a1ff7043</color>
+
 </resources>

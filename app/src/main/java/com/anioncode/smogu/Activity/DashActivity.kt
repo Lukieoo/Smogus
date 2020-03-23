@@ -3,6 +3,7 @@ package com.anioncode.smogu.Activity
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import com.anioncode.retrofit2.ApiService
+import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Fragments.DashFragment
 import com.anioncode.smogu.Fragments.MapFragment
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
@@ -17,9 +20,14 @@ import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.R
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_dash.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.RelativeLoader
+import kotlinx.android.synthetic.main.fragment_map.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class DashActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelectedListener{
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,18 +63,12 @@ class DashActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
 
         drawer.addDrawerListener(toggle)
         toggle.syncState()
+
+
     }
-    private fun setPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                200
-            )
-        }
-    }
+
+
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         selectItemDrawer(item)
 

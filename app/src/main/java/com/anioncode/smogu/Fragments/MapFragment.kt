@@ -252,6 +252,10 @@ class MapFragment : Fragment() {
                                 drawable =
                                     R.drawable.circle4
                             }
+                            4 -> {
+                                drawable =
+                                    R.drawable.circle5
+                            }
                             else -> {
                                 drawable =
                                     R.drawable.circle
