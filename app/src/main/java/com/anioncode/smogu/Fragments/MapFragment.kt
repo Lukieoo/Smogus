@@ -75,31 +75,33 @@ class MapFragment : Fragment() {
 
 
         /////////COMMENT________________START
-        if (modelIndexList.size == 0 || (sizedApplication) > 0 && sizedApplication != stationList.size) {
-//        if (modelIndexList.size == 0) {
+//        if (modelIndexList.size == 0 || (sizedApplication) > 0 && sizedApplication != stationList.size) {
+////        if (modelIndexList.size == 0) {
+//
+//            if (stationList.size > 0) {
+//                print("TAK $sizedApplication  ${stationList.size}  ")
+//                modelIndexList.clear()
+//                stationList = emptyList()
+//
+//            }
+//
+//            view.progress.visibility = View.VISIBLE
+//            getDataFromApi()
+//            setPermission()
+//            setMapFragment(Poland)
+//
+//        } else {
 
-            if (stationList.size > 0) {
-                print("TAK $sizedApplication  ${stationList.size}  ")
-                modelIndexList.clear()
-                stationList = emptyList()
 
-            }
-
-            view.progress.visibility = View.VISIBLE
-            getDataFromApi()
-            setPermission()
-            setMapFragment(Poland)
-
-        } else {
-            setPermission()
-            setMapFragment(Poland)
-            Handler().postDelayed(Runnable {
-                getAllData();
-                RelativeLoader.visibility = View.GONE
-
-            }, 1000)
-        }
+//        }
         /////////COMMENT________________END
+        setPermission()
+        setMapFragment(Poland)
+        Handler().postDelayed(Runnable {
+            getAllData();
+            RelativeLoader.visibility = View.GONE
+
+        }, 1000)
         view.fab.setOnClickListener(
             View.OnClickListener {
                 val location = CameraUpdateFactory.newLatLngBounds(Poland, 0)
@@ -110,13 +112,14 @@ class MapFragment : Fragment() {
 
         return view
     }
+
     private fun setMapFragment(Poland: LatLngBounds) {
         mapFragment = childFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
             googleMap.isMyLocationEnabled = true
             googleMap.setOnMapClickListener {
-                rel.visibility=View.GONE
+                rel.visibility = View.GONE
             }
             googleMap.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
 
@@ -131,23 +134,22 @@ class MapFragment : Fragment() {
 
                     for (findAll in stationList) {
 
-                        if (findAll.id==marker?.getSnippet()?.toInt()){
-                            rel.visibility=View.VISIBLE
+                        if (findAll.id == marker?.getSnippet()?.toInt()) {
+                            rel.visibility = View.VISIBLE
 
                             googleMap.setOnInfoWindowClickListener {
-
 
 
                             }
 
                             choose.setOnClickListener {
-                                val myPreference:MyPreference=MyPreference(requireContext())
+                                val myPreference: MyPreference = MyPreference(requireContext())
                                 myPreference.setID(marker?.getSnippet())
                                 myPreference.setSTATION_NAME(findAll.stationName)
                                 myPreference.setSTATION_STREET(findAll.addressStreet)
                                 myPreference.setSTATION_PROVINCE(findAll.city.commune.provinceName)
 
-                                Toast.makeText(activity,"Wybrano stację",Toast.LENGTH_LONG).show()
+                                Toast.makeText(activity, "Wybrano stację", Toast.LENGTH_LONG).show()
 
                             }
 
@@ -156,7 +158,6 @@ class MapFragment : Fragment() {
                             myContentView.provinceName.setText(findAll.city.commune.provinceName)
                             myContentView.adressStreet.setText(findAll.addressStreet)
                             myContentView.jakosc.setText(marker?.getTitle())
-
 
 
                             var color: Int =
@@ -223,12 +224,6 @@ class MapFragment : Fragment() {
 
                 // Permission to access the location is missing. Show rationale and request permission
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(Poland, 0))
-//                Handler().postDelayed(Runnable {
-//                    pulsator.stop()
-//                    RelativeLoader.visibility = View.GONE
-//
-//                }, 1000)
-
             })
 
 
@@ -248,73 +243,6 @@ class MapFragment : Fragment() {
                 200
             )
         }
-    }
-
-    private fun getDataFromApi() {
-
-        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-        api.findAll().enqueue(object : Callback<List<FindAll>> {
-            override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
-
-                stationList = response.body()!!
-                sizedApplication = stationList.size
-                for (FindAll in stationList) {
-
-
-                    api.getIndex(FindAll.id.toString()).enqueue(object : Callback<ModelIndex> {
-
-                        override fun onResponse(
-                            call: Call<ModelIndex>,
-                            response: Response<ModelIndex>
-                        ) {
-
-                            modelIndexList.add(response.body()!!)
-
-                            //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
-
-
-                            Log.d("MainActivity:Code ", "Call  ${response.body()!!}")
-                            iterator++;
-                            println(iterator)
-                            if (iterator == stationList.size) {
-                                if (context != null) {
-                                    getAllData();
-
-                                    //  Handler().postDelayed(Runnable {
-
-                                    RelativeLoader.visibility = View.GONE
-
-                                    //  }, 0)
-                                }
-                            }
-                            var pr: Double =
-                                Math.round(iterator / stationList.size.toDouble() * 100.0)
-                                    .toDouble()
-                            activity?.runOnUiThread {
-                                progress.text = pr.toInt().toString() + "%";
-                            }
-
-                        }
-
-                        override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
-                            Log.d("MainActivity1313x:Code ", "Call  ${t.message}")
-
-                        }
-
-                    })
-
-                }
-
-            }
-
-            override fun onFailure(call: Call<List<FindAll>>, t: Throwable) {
-                Log.d("MainActivity1313Code", "Call  ${t.message}")
-
-                RelativeLoader.visibility = View.GONE
-            }
-
-
-        })
     }
 
 
@@ -376,7 +304,9 @@ class MapFragment : Fragment() {
                     if (modelIndex.pm10IndexLevel != null) {
                         googleMap.addMarker(
 
-                            MarkerOptions().position(location).title(modelIndex.pm10IndexLevel.indexLevelName).snippet(FindAll.id.toString()).icon(
+                            MarkerOptions().position(location).title(modelIndex.pm10IndexLevel.indexLevelName).snippet(
+                                FindAll.id.toString()
+                            ).icon(
                                 context?.let {
                                     bitmapDescriptorFromVector(
                                         it,
@@ -390,7 +320,8 @@ class MapFragment : Fragment() {
                 }
         }
     }
-    private fun getDataStationSensor( id_select:String) {
+
+    private fun getDataStationSensor(id_select: String) {
         MyVariables.sensorbyIDList = ArrayList<SensorbyID>()//inicjalizacja danych mapy
 
 
@@ -428,7 +359,10 @@ class MapFragment : Fragment() {
                                                     LinearLayoutManager.HORIZONTAL,
                                                     false
                                                 )
-                                                adapter = SensorAdapter(MyVariables.sensorbyIDList, activity!!);
+                                                adapter = SensorAdapter(
+                                                    MyVariables.sensorbyIDList,
+                                                    activity!!
+                                                );
                                             }
                                         }
                                     }
@@ -450,6 +384,73 @@ class MapFragment : Fragment() {
 
         })
     }
+
+//    private fun getDataFromApi() {
+//
+//        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+//        api.findAll().enqueue(object : Callback<List<FindAll>> {
+//            override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
+//
+//                stationList = response.body()!!
+//                sizedApplication = stationList.size
+//                for (FindAll in stationList) {
+//
+//
+//                    api.getIndex(FindAll.id.toString()).enqueue(object : Callback<ModelIndex> {
+//
+//                        override fun onResponse(
+//                            call: Call<ModelIndex>,
+//                            response: Response<ModelIndex>
+//                        ) {
+//
+//                            modelIndexList.add(response.body()!!)
+//
+//                            //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
+//
+//
+//                            Log.d("MainActivity:Code ", "Call  ${response.body()!!}")
+//                            iterator++;
+//                            println(iterator)
+//                            if (iterator == stationList.size) {
+//                                if (context != null) {
+//                                    getAllData();
+//
+//                                    //  Handler().postDelayed(Runnable {
+//
+//                                    RelativeLoader.visibility = View.GONE
+//
+//                                    //  }, 0)
+//                                }
+//                            }
+//                            var pr: Double =
+//                                Math.round(iterator / stationList.size.toDouble() * 100.0)
+//                                    .toDouble()
+//                            activity?.runOnUiThread {
+//                                progress.text = pr.toInt().toString() + "%";
+//                            }
+//
+//                        }
+//
+//                        override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
+//                            Log.d("MainActivity1313x:Code ", "Call  ${t.message}")
+//
+//                        }
+//
+//                    })
+//
+//                }
+//
+//            }
+//
+//            override fun onFailure(call: Call<List<FindAll>>, t: Throwable) {
+//                Log.d("MainActivity1313Code", "Call  ${t.message}")
+//
+//                RelativeLoader.visibility = View.GONE
+//            }
+//
+//
+//        })
+//    }
 }
 
 
