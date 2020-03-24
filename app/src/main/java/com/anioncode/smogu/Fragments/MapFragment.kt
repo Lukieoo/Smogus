@@ -20,6 +20,7 @@ import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Model.ModelAll.FindAll
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
+import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
 import com.anioncode.smogu.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -31,6 +32,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.RelativeLoader
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.activity_main.view.fab
+import kotlinx.android.synthetic.main.custom_marker.*
+import kotlinx.android.synthetic.main.custom_marker.view.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_map.view.*
 import retrofit2.Call
@@ -60,8 +63,17 @@ class MapFragment : Fragment() {
         //variable
         val Poland = LatLngBounds(LatLng(47.0, 14.0), LatLng(56.5, 24.3))
 
-        if (modelIndexList.size == 0) {
-            view.progress.visibility=View.VISIBLE
+        if (modelIndexList.size == 0 || (sizedApplication) > 0 && sizedApplication != stationList.size) {
+//        if (modelIndexList.size == 0) {
+
+            if (stationList.size > 0) {
+                print("TAK $sizedApplication  ${stationList.size}  ")
+                modelIndexList.clear()
+                stationList = emptyList()
+
+            }
+
+            view.progress.visibility = View.VISIBLE
             getDataFromApi()
             setPermission()
             setMapFragment(Poland)
@@ -97,6 +109,67 @@ class MapFragment : Fragment() {
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
             googleMap.isMyLocationEnabled = true
+
+            googleMap.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
+
+                override fun getInfoContents(marker: Marker?): View {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun getInfoWindow(marker: Marker?): View {
+                    var myContentView: View = getLayoutInflater().inflate(
+                        R.layout.custom_marker, null
+                    )
+                    for (findAll in stationList) {
+
+                        if (findAll.id==marker?.getSnippet()?.toInt()){
+
+                            myContentView.name.setText(findAll.stationName)
+                            myContentView.provinceName.setText(findAll.city.commune.provinceName)
+                            myContentView.adressStreet.setText(findAll.addressStreet)
+                            myContentView.jakosc.setText(marker?.getTitle())
+
+                            var color: Int =
+                                R.color.colorbdb
+
+                            when (marker?.getTitle()) {
+                                "Bardzo dobry" -> {
+                                    color =
+                                        R.color.colorbdb
+                                }
+                                "Dobry" -> {
+                                    color =
+                                        R.color.colordb
+                                }
+                                "Umiarkowany" -> {
+                                    color =
+                                        R.color.colordst
+                                }
+                                "Zły" -> {
+                                    color =
+                                        R.color.colordop
+                                }
+                                "Bardzo zły" -> {
+                                    color =
+                                        R.color.colorndst
+                                }
+                                else -> {
+                                    color =
+                                        R.color.colorndst
+                                }
+                            }
+                            myContentView.jakosc.setTextColor(resources.getColor(color))
+                            break;
+                        }
+//                        findAll.stationName
+
+                    }
+
+                    return myContentView
+                }
+
+            })
+
             try {
                 val success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
@@ -154,7 +227,7 @@ class MapFragment : Fragment() {
             override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
 
                 stationList = response.body()!!
-
+                sizedApplication = stationList.size
                 for (FindAll in stationList) {
 
 
@@ -174,17 +247,23 @@ class MapFragment : Fragment() {
                             iterator++;
                             println(iterator)
                             if (iterator == stationList.size) {
-                                getAllData();
-                                //  Handler().postDelayed(Runnable {
+                                if (context != null) {
+                                    getAllData();
 
-                                RelativeLoader.visibility = View.GONE
+                                    //  Handler().postDelayed(Runnable {
 
-                                //  }, 0)
+                                    RelativeLoader.visibility = View.GONE
+
+                                    //  }, 0)
+                                }
                             }
-                            var pr:Double= Math.round(iterator/stationList.size.toDouble()*100.0).toDouble()
+                            var pr: Double =
+                                Math.round(iterator / stationList.size.toDouble() * 100.0)
+                                    .toDouble()
                             activity?.runOnUiThread {
-                                progress.text= pr.toInt().toString()+"%";
+                                progress.text = pr.toInt().toString() + "%";
                             }
+
                         }
 
                         override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
@@ -231,7 +310,6 @@ class MapFragment : Fragment() {
         for (FindAll in stationList) {
             var drawable: Int =
                 R.drawable.circle
-
             for (modelIndex in modelIndexList)
                 if (modelIndex.id.equals(FindAll.id)) {
                     if (modelIndex.pm10IndexLevel != null) {
@@ -268,13 +346,16 @@ class MapFragment : Fragment() {
                     if (modelIndex.pm10IndexLevel != null) {
                         googleMap.addMarker(
 
-                            MarkerOptions().position(location).title(modelIndex.pm10IndexLevel.indexLevelName).icon(
-                                bitmapDescriptorFromVector(
-                                    requireContext(),
-                                    drawable
-                                )
+                            MarkerOptions().position(location).title(modelIndex.pm10IndexLevel.indexLevelName).snippet(FindAll.id.toString()).icon(
+                                context?.let {
+                                    bitmapDescriptorFromVector(
+                                        it,
+                                        drawable
+                                    )
+                                }
                             )
                         )
+
                     }
                 }
         }

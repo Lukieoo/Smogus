@@ -8,8 +8,10 @@ import com.anioncode.smogu.Model.ModelSensorId.SensorbyID
 class MyVariables {
 
     companion object {
-         var stationList: List<FindAll> = listOf()
+        var stationList: List<FindAll> = listOf()
+
         lateinit var sensorsNameList: List<SensorsName>
+        var sizedApplication: Int = 0
         lateinit var sensorbyIDList: ArrayList<SensorbyID>
         lateinit var modelIndexList: ArrayList<ModelIndex>
     }

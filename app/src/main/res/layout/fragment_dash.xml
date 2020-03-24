@@ -176,7 +176,7 @@
                 android:layout_margin="10dp"
                 android:fontFamily="@font/productsanslight"
                 android:gravity="center"
-                android:text="Bardzo dobra"
+                android:text=""
                 android:textColor="@color/colorGreen"
                 android:textSize="18sp" />
         </androidx.cardview.widget.CardView>

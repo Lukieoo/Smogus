@@ -54,6 +54,7 @@ class StatsFragment : Fragment() {
 
             RecyclerView
         })
+
     }
 
     private fun getDataStation() {
