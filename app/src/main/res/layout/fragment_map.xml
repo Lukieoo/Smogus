@@ -43,14 +43,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </RelativeLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/RecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/rel"
+        android:layout_marginBottom="-35dp"
         android:layout_above="@+id/fab"
-        android:layout_marginBottom="-25dp"
-        android:orientation="horizontal"
-        tools:listitem="@layout/item_pomiar" />
+        android:elevation="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:text="Wybierz stację"
+            android:backgroundTint="@color/colorPrimary"
+            android:id="@+id/choose"
+            android:layout_margin="4dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_below="@id/choose"
+            android:id="@+id/RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+
+            android:orientation="horizontal"
+            tools:listitem="@layout/item_pomiar" />
+    </RelativeLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:elevation="2dp"
         android:id="@+id/fab"
@@ -61,8 +81,9 @@
         app:borderWidth="0dp"
         app:srcCompat="@drawable/poland"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:layout_alignParentBottom="true"
         />
+
     <!--    app:tint="@null"-->
 </RelativeLayout>

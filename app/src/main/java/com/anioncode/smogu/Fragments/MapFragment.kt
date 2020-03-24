@@ -115,7 +115,9 @@ class MapFragment : Fragment() {
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
             googleMap.isMyLocationEnabled = true
-
+            googleMap.setOnMapClickListener {
+                rel.visibility=View.GONE
+            }
             googleMap.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
 
                 override fun getInfoContents(marker: Marker?): View {
@@ -130,9 +132,15 @@ class MapFragment : Fragment() {
                     for (findAll in stationList) {
 
                         if (findAll.id==marker?.getSnippet()?.toInt()){
+                            rel.visibility=View.VISIBLE
 
                             googleMap.setOnInfoWindowClickListener {
 
+
+
+                            }
+
+                            choose.setOnClickListener {
                                 val myPreference:MyPreference=MyPreference(requireContext())
                                 myPreference.setID(marker?.getSnippet())
                                 myPreference.setSTATION_NAME(findAll.stationName)
@@ -141,8 +149,8 @@ class MapFragment : Fragment() {
 
                                 Toast.makeText(activity,"Wybrano stację",Toast.LENGTH_LONG).show()
 
-
                             }
+
                             getDataStationSensor(findAll.id.toString())
                             myContentView.name.setText(findAll.stationName)
                             myContentView.provinceName.setText(findAll.city.commune.provinceName)

@@ -35,14 +35,7 @@
             android:id="@+id/jakosc"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <Button
-            android:text="Wybierz"
-            android:backgroundTint="@color/colorPrimary"
-            android:id="@+id/choose"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
