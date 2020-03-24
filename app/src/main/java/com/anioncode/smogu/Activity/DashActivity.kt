@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.Fragments.StatsFragment
 import com.anioncode.smogu.Fragments.MapFragment
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
@@ -22,6 +23,9 @@ class DashActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_dash)
 
         MyVariables.modelIndexList = ArrayList<ModelIndex>()//inicjalizacja danych mapy
+
+
+
 
         getSupportFragmentManager().beginTransaction().replace(
             R.id.fragment,

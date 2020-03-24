@@ -69,7 +69,7 @@
 
                     <TextView
 
-
+                        android:id="@+id/nameStation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
@@ -88,7 +88,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-
+                        android:id="@+id/nameStreet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
@@ -107,6 +107,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/nameProvince"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"

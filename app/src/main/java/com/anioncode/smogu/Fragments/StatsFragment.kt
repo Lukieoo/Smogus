@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Adapter.SensorAdapter
+import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorbyIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorsNameList
@@ -28,21 +29,31 @@ import retrofit2.Response
  */
 class StatsFragment : Fragment() {
     lateinit var modelIndex: ModelIndex
-
+    lateinit var myPreference: MyPreference
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
-
         return inflater.inflate(R.layout.fragment_dash, container, false)
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        //Preferences
+        myPreference = MyPreference(requireContext())
+
+        if (!myPreference.getID().equals("")) {
+            nameStation.text = myPreference.getSTATION_NAME()
+            nameStreet.text = myPreference.getSTATION_STREET()
+            nameProvince.text = myPreference.getSTATION_PROVINCE()
+        }
+
+
         getDataStation()
+
+
 
         getDataStationSensor()
         maps.setOnClickListener(View.OnClickListener {
@@ -52,7 +63,7 @@ class StatsFragment : Fragment() {
             getFragmentManager()?.beginTransaction()
                 ?.replace(R.id.fragment, MapFragment(), "SOMETAG")?.commit();
 
-            RecyclerView
+
         })
 
     }
@@ -60,7 +71,7 @@ class StatsFragment : Fragment() {
     private fun getDataStation() {
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
 
-        api.getIndex("14").enqueue(object : Callback<ModelIndex> {
+        api.getIndex(if(!myPreference.getID().toString().equals("")) myPreference.getID().toString() else "14").enqueue(object : Callback<ModelIndex> {
 
             override fun onResponse(
                 call: Call<ModelIndex>,
@@ -121,7 +132,7 @@ class StatsFragment : Fragment() {
 
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
 
-        api.getData("14").enqueue(object : Callback<List<SensorsName>> {
+        api.getData(if(!myPreference.getID().equals("")) myPreference.getID() else "14").enqueue(object : Callback<List<SensorsName>> {
 
             override fun onResponse(
                 call: Call<List<SensorsName>>,
@@ -141,7 +152,6 @@ class StatsFragment : Fragment() {
                                     response: Response<SensorbyID>
                                 ) {
                                     sensorbyIDList.add(response.body()!!)
-                                    println("o kurde2332 ${sensorbyIDList.size}")
 
 
                                     if (sensorbyIDList.size > 0) {
@@ -161,7 +171,6 @@ class StatsFragment : Fragment() {
                                 }
 
                                 override fun onFailure(call: Call<SensorbyID>, t: Throwable) {
-                                    Log.d("MainActivity1313x: ", "Call  ${t.message}")
 
                                 }
 
@@ -169,11 +178,9 @@ class StatsFragment : Fragment() {
                     }
                 }
 
-                println("${response.body()} ttttttttttttttttttt")
             }
 
             override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
-                Log.d("MainActivity1313x: ", "Call  ${t.message}")
 
             }
 

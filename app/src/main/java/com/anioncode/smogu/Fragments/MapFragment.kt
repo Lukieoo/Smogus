@@ -13,15 +13,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
+import com.anioncode.smogu.Adapter.SensorAdapter
+import com.anioncode.smogu.CONST.MyPreference
+import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.Model.ModelAll.FindAll
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
+import com.anioncode.smogu.Model.ModelSensor.SensorsName
+import com.anioncode.smogu.Model.ModelSensorId.SensorbyID
 import com.anioncode.smogu.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -34,7 +41,9 @@ import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.activity_main.view.fab
 import kotlinx.android.synthetic.main.custom_marker.*
 import kotlinx.android.synthetic.main.custom_marker.view.*
+import kotlinx.android.synthetic.main.fragment_dash.*
 import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.android.synthetic.main.fragment_map.RecyclerView
 import kotlinx.android.synthetic.main.fragment_map.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,6 +56,7 @@ class MapFragment : Fragment() {
 
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
+
     //    lateinit var stationList: List<FindAll>
 //    lateinit var sensorsNameList: List<SensorsName>
 //    lateinit var modelIndexList: ArrayList<ModelIndex>
@@ -63,6 +73,8 @@ class MapFragment : Fragment() {
         //variable
         val Poland = LatLngBounds(LatLng(47.0, 14.0), LatLng(56.5, 24.3))
 
+
+        /////////COMMENT________________START
         if (modelIndexList.size == 0 || (sizedApplication) > 0 && sizedApplication != stationList.size) {
 //        if (modelIndexList.size == 0) {
 
@@ -81,17 +93,13 @@ class MapFragment : Fragment() {
         } else {
             setPermission()
             setMapFragment(Poland)
-
             Handler().postDelayed(Runnable {
                 getAllData();
                 RelativeLoader.visibility = View.GONE
 
             }, 1000)
-
         }
-
-
-
+        /////////COMMENT________________END
         view.fab.setOnClickListener(
             View.OnClickListener {
                 val location = CameraUpdateFactory.newLatLngBounds(Poland, 0)
@@ -102,8 +110,6 @@ class MapFragment : Fragment() {
 
         return view
     }
-
-
     private fun setMapFragment(Poland: LatLngBounds) {
         mapFragment = childFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
@@ -120,14 +126,30 @@ class MapFragment : Fragment() {
                     var myContentView: View = getLayoutInflater().inflate(
                         R.layout.custom_marker, null
                     )
+
                     for (findAll in stationList) {
 
                         if (findAll.id==marker?.getSnippet()?.toInt()){
 
+                            googleMap.setOnInfoWindowClickListener {
+
+                                val myPreference:MyPreference=MyPreference(requireContext())
+                                myPreference.setID(marker?.getSnippet())
+                                myPreference.setSTATION_NAME(findAll.stationName)
+                                myPreference.setSTATION_STREET(findAll.addressStreet)
+                                myPreference.setSTATION_PROVINCE(findAll.city.commune.provinceName)
+
+                                Toast.makeText(activity,"Wybrano stację",Toast.LENGTH_LONG).show()
+
+
+                            }
+                            getDataStationSensor(findAll.id.toString())
                             myContentView.name.setText(findAll.stationName)
                             myContentView.provinceName.setText(findAll.city.commune.provinceName)
                             myContentView.adressStreet.setText(findAll.addressStreet)
                             myContentView.jakosc.setText(marker?.getTitle())
+
+
 
                             var color: Int =
                                 R.color.colorbdb
@@ -243,7 +265,7 @@ class MapFragment : Fragment() {
                             //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
 
 
-                            Log.d("MainActivity8383:Code ", "Call  ${response.body()!!}")
+                            Log.d("MainActivity:Code ", "Call  ${response.body()!!}")
                             iterator++;
                             println(iterator)
                             if (iterator == stationList.size) {
@@ -359,6 +381,66 @@ class MapFragment : Fragment() {
                     }
                 }
         }
+    }
+    private fun getDataStationSensor( id_select:String) {
+        MyVariables.sensorbyIDList = ArrayList<SensorbyID>()//inicjalizacja danych mapy
+
+
+        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+
+        api.getData(id_select).enqueue(object : Callback<List<SensorsName>> {
+
+            override fun onResponse(
+                call: Call<List<SensorsName>>,
+                response: Response<List<SensorsName>>
+            ) {
+
+                MyVariables.sensorsNameList = response.body()!!
+
+                activity?.runOnUiThread {
+                    for (sensorsName in MyVariables.sensorsNameList) {
+
+                        api.getSensor(sensorsName.id.toString())
+                            .enqueue(object : Callback<SensorbyID> {
+
+                                override fun onResponse(
+                                    call: Call<SensorbyID>,
+                                    response: Response<SensorbyID>
+                                ) {
+                                    MyVariables.sensorbyIDList.add(response.body()!!)
+
+
+                                    if (MyVariables.sensorbyIDList.size > 0) {
+
+
+                                        activity?.runOnUiThread {
+                                            RecyclerView.apply {
+                                                layoutManager = LinearLayoutManager(
+                                                    activity,
+                                                    LinearLayoutManager.HORIZONTAL,
+                                                    false
+                                                )
+                                                adapter = SensorAdapter(MyVariables.sensorbyIDList, activity!!);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<SensorbyID>, t: Throwable) {
+
+                                }
+
+                            })
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
+
+            }
+
+        })
     }
 }
 
