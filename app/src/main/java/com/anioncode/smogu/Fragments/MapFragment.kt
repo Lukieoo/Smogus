@@ -93,7 +93,10 @@ class MapFragment : Fragment() {
         setMapFragment(Poland)
         Handler().postDelayed(Runnable {
             getAllData();
-            RelativeLoader.visibility = View.GONE
+            if (context != null) {
+                RelativeLoader.visibility = View.GONE
+            }
+
 
         }, 1800)
         view.fab.setOnClickListener(
