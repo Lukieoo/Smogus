@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        tools:context=".Fragments.InfoFragment">
+
+        <RelativeLayout
+            android:id="@+id/stationPart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:padding="10dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/productsansmedium"
+                android:paddingBottom="8dp"
+
+                android:text="Normy jakości powietrza"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/pm10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/info"
+                android:fontFamily="@font/productsanslight"
+                android:paddingBottom="8dp"
+                android:text="Natężenie pyłu PM10 norma:"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pm10info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pm10"
+                android:fontFamily="@font/productsanslight"
+                android:paddingBottom="8dp"
+                android:text="PM10 - mieszanina zawieszonych w powietrzu cząsteczek o średnicy nie większej niż 10 μm. W skład mogą wchodzić takie substancje toksyczne jak np. benzopireny, dioksyny i furany. Występowanie pyłów PM10 związane jest m.in. z procesami spalania paliw stałych i ciekłych"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stationPart">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colorbdb"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Bardzo dobra" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colordb"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Dobra" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colordst"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Umiarkowana" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colordop"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Dostateczna" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colorndst"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Zła" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colorndstx"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Bardzo zła" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            app:layout_constraintTop_toBottomOf="@+id/stationPart">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="0 – 20 [µg/m3]" />
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="20.1 – 50 [µg/m3]" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="50.1 – 80 [µg/m3]" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="80.1 – 110 [µg/m3]" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="110.1 – 150 [µg/m3]" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/productsansmedium"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="> 150 [µg/m3]" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

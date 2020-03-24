@@ -12,7 +12,7 @@
     android:layout_height="match_parent"
     android:layout_below="@+id/toolbar"
     android:padding="20dp"
-    tools:context=".Activity.DashActivity">
+    tools:context=".Activity.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -169,6 +169,7 @@
             app:cardCornerRadius="4dp">
 
             <TextView
+                android:textStyle="bold"
                 android:id="@+id/jakosc"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

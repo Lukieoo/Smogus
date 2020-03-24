@@ -22,7 +22,7 @@ class SpashScreen : AppCompatActivity() {
             }
 
             override fun onAnimationEnd(p0: Animator?) {
-                var intent: Intent = Intent(this@SpashScreen, DashActivity::class.java)
+                var intent: Intent = Intent(this@SpashScreen, MainActivity::class.java)
                 startActivity(intent)
                 finish()
             }

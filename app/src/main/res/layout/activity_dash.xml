@@ -41,6 +41,7 @@
         app:headerLayout="@layout/nav_header_main"
         app:itemIconTint="@color/common_google_signin_btn_text_light_default"
         app:itemTextColor="@color/common_google_signin_btn_text_light_default"
+
         app:menu="@menu/menu"
 
         />

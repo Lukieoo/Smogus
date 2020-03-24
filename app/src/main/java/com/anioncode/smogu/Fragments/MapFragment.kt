@@ -35,13 +35,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.RelativeLoader
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.activity_main.view.fab
-import kotlinx.android.synthetic.main.custom_marker.*
 import kotlinx.android.synthetic.main.custom_marker.view.*
-import kotlinx.android.synthetic.main.fragment_dash.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_map.RecyclerView
 import kotlinx.android.synthetic.main.fragment_map.view.*
@@ -101,7 +95,7 @@ class MapFragment : Fragment() {
             getAllData();
             RelativeLoader.visibility = View.GONE
 
-        }, 1000)
+        }, 1800)
         view.fab.setOnClickListener(
             View.OnClickListener {
                 val location = CameraUpdateFactory.newLatLngBounds(Poland, 0)
@@ -176,13 +170,17 @@ class MapFragment : Fragment() {
                                     color =
                                         R.color.colordst
                                 }
-                                "Zły" -> {
+                                "Dostateczny" -> {
                                     color =
                                         R.color.colordop
                                 }
-                                "Bardzo zły" -> {
+                                "Zły" -> {
                                     color =
                                         R.color.colorndst
+                                }
+                                "Bardzo zły" -> {
+                                    color =
+                                        R.color.colorndstx
                                 }
                                 else -> {
                                     color =
@@ -292,9 +290,13 @@ class MapFragment : Fragment() {
                                 drawable =
                                     R.drawable.circle5
                             }
+                            5 -> {
+                                drawable =
+                                    R.drawable.circle6
+                            }
                             else -> {
                                 drawable =
-                                    R.drawable.circle
+                                    R.drawable.circle3
                             }
                         }
                     }

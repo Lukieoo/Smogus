@@ -16,6 +16,7 @@ import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
+import com.anioncode.smogu.Fragments.InfoFragment
 import com.anioncode.smogu.Model.ModelAll.FindAll
 import com.anioncode.smogu.R
 import com.google.android.material.navigation.NavigationView
@@ -25,7 +26,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_dash.*
 
-class DashActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,7 +111,10 @@ class DashActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 MapFragment(), "SOMETAG"
             ).commit()
         } else if (id == R.id.info) {
-
+            supportFragmentManager.beginTransaction().replace(
+                R.id.fragment,
+                InfoFragment(), "SOMETAG"
+            ).commit()
         }
 
         drawer.closeDrawer(GravityCompat.START)
