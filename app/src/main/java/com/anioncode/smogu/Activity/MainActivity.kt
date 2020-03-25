@@ -1,30 +1,31 @@
 package com.anioncode.smogu.Activity
 
+import android.animation.Animator
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
-import com.anioncode.smogu.CONST.MyPreference
-import com.anioncode.smogu.Fragments.StatsFragment
-import com.anioncode.smogu.Fragments.MapFragment
-import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
 import com.anioncode.smogu.Fragments.InfoFragment
-import com.anioncode.smogu.Model.ModelAll.FindAll
+import com.anioncode.smogu.Fragments.MapFragment
+import com.anioncode.smogu.Fragments.StatsFragment
+import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
 import com.google.android.material.navigation.NavigationView
-import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_dash.*
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -81,6 +82,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 ) {
                     super.onDrawerSlide(drawerView, slideOffset)
 
+                    if (drawer.isDrawerVisible(Gravity.RIGHT)) {
+                        val slideX = -1 * (drawerView.width * slideOffset)
+                        moveRelative.translationX = slideX
+                    } else {
+                        val slideX = drawerView.width * slideOffset
+                        moveRelative.translationX = slideX
+                    }
                 }
             }
 
@@ -88,6 +96,57 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
 
+        sync.setOnClickListener {
+            sync.playAnimation()
+        }
+        sync.addAnimatorListener(object : Animator.AnimatorListener {
+            override fun onAnimationRepeat(p0: Animator?) {
+
+            }
+
+            override fun onAnimationEnd(p0: Animator?) {
+                var frg: Fragment? = null
+                frg = supportFragmentManager.findFragmentByTag("SOMETAG")
+                val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+                frg?.let { ft.detach(it) }
+                frg?.let { ft.attach(it) }
+                ft.commit()
+                sync.pauseAnimation()
+            }
+
+            override fun onAnimationCancel(p0: Animator?) {
+
+            }
+
+            override fun onAnimationStart(p0: Animator?) {
+
+                val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+                stationList= emptyList()
+                sizedApplication=0
+                modelIndexList.clear()
+
+                service.findAllRX().subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ findall ->
+
+                        stationList = findall
+                        sizedApplication = stationList.size
+                        for (findAllModel in stationList) {
+                            service.getIndexRX(findAllModel.id.toString()).subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                        model ->  modelIndexList.add(model)
+                                    println("moveIN ${modelIndexList.size}")
+                                }, {
+
+                                })
+                        }
+                    }, { t ->
+                        t.message
+                    })
+            }
+
+        })
     }
 
 

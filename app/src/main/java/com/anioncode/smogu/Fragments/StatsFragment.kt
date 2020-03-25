@@ -1,12 +1,15 @@
 package com.anioncode.smogu.Fragments
 
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
@@ -50,8 +53,9 @@ class StatsFragment : Fragment() {
             nameProvince.text = myPreference.getSTATION_PROVINCE()
         }
 
+        if (isOnline(requireContext()))
 
-        getDataStation()
+            getDataStation()
 
 
 
@@ -71,59 +75,60 @@ class StatsFragment : Fragment() {
     private fun getDataStation() {
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
 
-        api.getIndex(if(!myPreference.getID().toString().equals("")) myPreference.getID().toString() else "14").enqueue(object : Callback<ModelIndex> {
+        api.getIndex(if (!myPreference.getID().toString().equals("")) myPreference.getID().toString() else "14")
+            .enqueue(object : Callback<ModelIndex> {
 
-            override fun onResponse(
-                call: Call<ModelIndex>,
-                response: Response<ModelIndex>
-            ) {
-                var color: Int =
-                    R.color.colorbdb
-                modelIndex = response.body()!!
+                override fun onResponse(
+                    call: Call<ModelIndex>,
+                    response: Response<ModelIndex>
+                ) {
+                    var color: Int =
+                        R.color.colorbdb
+                    modelIndex = response.body()!!
 
-                if (modelIndex.pm10IndexLevel != null) {
-                    when (modelIndex.pm10IndexLevel.id) {
-                        0 -> {
-                            color =
-                                R.color.colorbdb
-                        }
-                        1 -> {
-                            color =
-                                R.color.colordb
-                        }
-                        2 -> {
-                            color =
-                                R.color.colordst
-                        }
-                        3 -> {
-                            color =
-                                R.color.colordop
-                        }
-                        4 -> {
-                            color =
-                                R.color.colorndst
-                        }
-                        else -> {
-                            color =
-                                R.color.colorndst
+                    if (modelIndex.pm10IndexLevel != null) {
+                        when (modelIndex.pm10IndexLevel.id) {
+                            0 -> {
+                                color =
+                                    R.color.colorbdb
+                            }
+                            1 -> {
+                                color =
+                                    R.color.colordb
+                            }
+                            2 -> {
+                                color =
+                                    R.color.colordst
+                            }
+                            3 -> {
+                                color =
+                                    R.color.colordop
+                            }
+                            4 -> {
+                                color =
+                                    R.color.colorndst
+                            }
+                            else -> {
+                                color =
+                                    R.color.colorndst
+                            }
                         }
                     }
+
+                    activity?.runOnUiThread {
+                        jakosc.text = modelIndex.stIndexLevel.indexLevelName
+                        jakosc.setTextColor(resources.getColor(color))
+                    }
+
+                    println("${response.body()} ttttttttttttttttttt")
                 }
 
-                activity?.runOnUiThread {
-                    jakosc.text = modelIndex.stIndexLevel.indexLevelName
-                    jakosc.setTextColor(resources.getColor(color))
+                override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
+                    Log.d("MainActivity1313x: ", "Call  ${t.message}")
+
                 }
 
-                println("${response.body()} ttttttttttttttttttt")
-            }
-
-            override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
-                Log.d("MainActivity1313x: ", "Call  ${t.message}")
-
-            }
-
-        })
+            })
     }
 
     private fun getDataStationSensor() {
@@ -132,58 +137,67 @@ class StatsFragment : Fragment() {
 
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
 
-        api.getData(if(!myPreference.getID().equals("")) myPreference.getID() else "14").enqueue(object : Callback<List<SensorsName>> {
+        api.getData(if (!myPreference.getID().equals("")) myPreference.getID() else "14")
+            .enqueue(object : Callback<List<SensorsName>> {
 
-            override fun onResponse(
-                call: Call<List<SensorsName>>,
-                response: Response<List<SensorsName>>
-            ) {
+                override fun onResponse(
+                    call: Call<List<SensorsName>>,
+                    response: Response<List<SensorsName>>
+                ) {
 
-                sensorsNameList = response.body()!!
+                    sensorsNameList = response.body()!!
 
-                activity?.runOnUiThread {
-                    for (sensorsName in sensorsNameList) {
+                    activity?.runOnUiThread {
+                        for (sensorsName in sensorsNameList) {
 
-                        api.getSensor(sensorsName.id.toString())
-                            .enqueue(object : Callback<SensorbyID> {
+                            api.getSensor(sensorsName.id.toString())
+                                .enqueue(object : Callback<SensorbyID> {
 
-                                override fun onResponse(
-                                    call: Call<SensorbyID>,
-                                    response: Response<SensorbyID>
-                                ) {
-                                    sensorbyIDList.add(response.body()!!)
-
-
-                                    if (sensorbyIDList.size > 0) {
+                                    override fun onResponse(
+                                        call: Call<SensorbyID>,
+                                        response: Response<SensorbyID>
+                                    ) {
+                                        sensorbyIDList.add(response.body()!!)
 
 
-                                        activity?.runOnUiThread {
-                                            RecyclerView.apply {
-                                                layoutManager = LinearLayoutManager(
-                                                    activity,
-                                                    LinearLayoutManager.HORIZONTAL,
-                                                    false
-                                                )
-                                                adapter = SensorAdapter(sensorbyIDList, activity!!);
+                                        if (sensorbyIDList.size > 0) {
+
+
+                                            activity?.runOnUiThread {
+                                                RecyclerView.apply {
+                                                    layoutManager = LinearLayoutManager(
+                                                        activity,
+                                                        LinearLayoutManager.HORIZONTAL,
+                                                        false
+                                                    )
+                                                    adapter =
+                                                        SensorAdapter(sensorbyIDList, activity!!);
+                                                }
                                             }
                                         }
                                     }
-                                }
 
-                                override fun onFailure(call: Call<SensorbyID>, t: Throwable) {
+                                    override fun onFailure(call: Call<SensorbyID>, t: Throwable) {
 
-                                }
+                                    }
 
-                            })
+                                })
+                        }
                     }
+
                 }
 
-            }
+                override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
 
-            override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
+                }
 
-            }
+            })
+    }
 
-        })
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }
