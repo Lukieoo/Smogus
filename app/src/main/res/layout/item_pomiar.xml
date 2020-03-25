@@ -19,7 +19,7 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="4dp"
             android:fontFamily="@font/productsansmedium"
-            android:text="PM2.5"
+            android:text=""
             android:textSize="16sp" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="4dp"
             android:fontFamily="@font/productsansmedium"
-            android:text="7,2"
+            android:text=""
             android:textSize="19sp" />
         <TextView
 

@@ -7,10 +7,16 @@
         android:title="Statystyki"
         app:showAsAction="ifRoom"></item>
     <item
+        android:id="@+id/stats"
+        android:icon="@drawable/statprem"
+        android:title="Wykres"
+        app:showAsAction="ifRoom"></item>
+    <item
         android:id="@+id/maps"
         android:icon="@drawable/city"
         android:title="Mapa"
         app:showAsAction="ifRoom"></item>
+
     <item
         android:id="@+id/info"
         android:icon="@drawable/info"

@@ -5,12 +5,21 @@ import android.content.Context
 class MyPreference(context:Context){
     val PRERFERENCES_NAME="SHAREDPREFRENCES"
     val PRERFERENCES_ID="ID"
+    val PRERFERENCES_SENSORID="SENSORID"
     val PRERFERENCES_STATION_NAME="STATION_NAME"
     val PRERFERENCES_STATION_STREET="STATION_STREET"
     val PRERFERENCES_STATION_PROVINCE="STATION_PROVINCE"
 
     val preference=context.getSharedPreferences(PRERFERENCES_NAME,Context.MODE_PRIVATE)
 
+    fun getSENSORID():String{
+        return preference.getString(PRERFERENCES_SENSORID,"").toString()
+    }
+    fun setSENSORID(id:String){
+        val editor=preference.edit()
+        editor.putString(PRERFERENCES_SENSORID,id)
+        editor.apply()
+    }
     fun getID():String{
         return preference.getString(PRERFERENCES_ID,"").toString()
     }
@@ -19,7 +28,6 @@ class MyPreference(context:Context){
         editor.putString(PRERFERENCES_ID,id)
         editor.apply()
     }
-
 
     fun getSTATION_NAME():String{
         return preference.getString(PRERFERENCES_STATION_NAME,"").toString()

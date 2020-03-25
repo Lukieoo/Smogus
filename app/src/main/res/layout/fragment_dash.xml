@@ -27,7 +27,7 @@
 
             android:text="Moja stacja"
             android:textSize="22sp" />
-  
+
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
@@ -75,7 +75,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/productsanslight"
                         android:maxLines="1"
-                        android:text="Wrocław - Bartnicza" />
+                        android:text="" />
 
                     <TextView
 
@@ -94,7 +94,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/productsanslight"
                         android:maxLines="1"
-                        android:text="ul. Bartnicza" />
+                        android:text="" />
 
                     <TextView
 
@@ -113,7 +113,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/productsanslight"
                         android:maxLines="1"
-                        android:text="DOLNOŚLĄSKIE" />
+                        android:text="" />
                 </LinearLayout>
 
                 <ImageView
@@ -156,7 +156,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
             android:fontFamily="@font/productsansmedium"
-            android:text="Ocena jakości :"
+            android:text="Ocena jakości PM10:"
             android:textSize="16sp" />
 
         <androidx.cardview.widget.CardView

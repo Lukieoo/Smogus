@@ -89,7 +89,7 @@ class MapFragment : Fragment() {
 
 //        }
         /////////COMMENT________________END
-        setPermission()
+
         setMapFragment(Poland)
         Handler().postDelayed(Runnable {
             getAllData();
@@ -231,20 +231,7 @@ class MapFragment : Fragment() {
         })
     }
 
-    private fun setPermission() {
-        if (ContextCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                200
-            )
-        }
-    }
+
 
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {

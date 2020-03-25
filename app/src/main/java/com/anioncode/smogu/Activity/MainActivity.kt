@@ -1,12 +1,16 @@
 package com.anioncode.smogu.Activity
 
+import android.Manifest
 import android.animation.Animator
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -16,6 +20,7 @@ import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
+import com.anioncode.smogu.Fragments.ChartFragment
 import com.anioncode.smogu.Fragments.InfoFragment
 import com.anioncode.smogu.Fragments.MapFragment
 import com.anioncode.smogu.Fragments.StatsFragment
@@ -37,7 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         MyVariables.modelIndexList = ArrayList<ModelIndex>()//inicjalizacja danych mapy
 
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-
+        setPermission()
         service.findAllRX().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ findall ->
@@ -148,7 +153,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         })
     }
-
+    private fun setPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this@MainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this@MainActivity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                200
+            )
+        }
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         selectItemDrawer(item)
@@ -173,6 +191,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 InfoFragment(), "SOMETAG"
+            ).commit()
+        }else if (id == R.id.stats) {
+            supportFragmentManager.beginTransaction().replace(
+                R.id.fragment,
+                ChartFragment(), "SOMETAG"
             ).commit()
         }
 

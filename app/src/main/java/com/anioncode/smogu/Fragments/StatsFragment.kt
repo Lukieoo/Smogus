@@ -147,6 +147,8 @@ class StatsFragment : Fragment() {
 
                     sensorsNameList = response.body()!!
 
+                    myPreference.setSENSORID(sensorsNameList.get(0).id.toString())
+
                     activity?.runOnUiThread {
                         for (sensorsName in sensorsNameList) {
 
