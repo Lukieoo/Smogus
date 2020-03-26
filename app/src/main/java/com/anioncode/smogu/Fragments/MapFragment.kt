@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
@@ -44,8 +45,8 @@ import retrofit2.Response
 class MapFragment : Fragment() {
 
     lateinit var mapFragment: SupportMapFragment
-    lateinit var googleMap: GoogleMap
-    lateinit var sensorId:String
+    lateinit var  googleMap: GoogleMap
+    lateinit var sensorId: String
     lateinit var sensorIDListNotStatic: ArrayList<String>
     //    lateinit var stationList: List<FindAll>
 //    lateinit var sensorsNameList: List<SensorsName>
@@ -107,13 +108,14 @@ class MapFragment : Fragment() {
     }
 
     private fun setMapFragment(Poland: LatLngBounds) {
-        sensorIDListNotStatic =ArrayList<String>()
+        sensorIDListNotStatic = ArrayList<String>()
         mapFragment = childFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
             googleMap.isMyLocationEnabled = true
             googleMap.setOnMapClickListener {
                 rel.visibility = View.GONE
+
             }
             googleMap.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
 
@@ -134,18 +136,18 @@ class MapFragment : Fragment() {
                             googleMap.setOnInfoWindowClickListener {
                             }
 
-                                  choose.setOnClickListener {
+                            choose.setOnClickListener {
                                 val myPreference: MyPreference = MyPreference(requireContext())
                                 myPreference.setID(marker?.getSnippet())
                                 myPreference.setSTATION_NAME(findAll.stationName)
                                 myPreference.setSTATION_STREET(findAll.addressStreet)
                                 myPreference.setSTATION_PROVINCE(findAll.city.commune.provinceName)
-                               // myPreference.setSENSORID(sensorId)
-                                      sensorIDList.clear()
-                                      sensorIDList=sensorIDListNotStatic
+                                // myPreference.setSENSORID(sensorId)
+                                sensorIDList.clear()
+                                sensorIDList = sensorIDListNotStatic
 
-                                      getFragmentManager()?.beginTransaction()
-                                          ?.replace(R.id.fragment, StatsFragment(), "SOMETAG")?.commit();
+                                getFragmentManager()?.beginTransaction()
+                                    ?.replace(R.id.fragment, StatsFragment(), "SOMETAG")?.commit();
 
                                 Toast.makeText(activity, "Wybrano stację", Toast.LENGTH_LONG).show()
 
@@ -231,8 +233,6 @@ class MapFragment : Fragment() {
 
         })
     }
-
-
 
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
@@ -360,12 +360,13 @@ class MapFragment : Fragment() {
                                                 adapter = SensorAdapter(
                                                     MyVariables.sensorbyIDList,
                                                     activity!!,
-                                                     clickListner = object :SensorAdapter.OnItemClickListner{
-                                                         override fun onItemClick(model: SensorbyID) {
+                                                    clickListner = object :
+                                                        SensorAdapter.OnItemClickListner {
+                                                        override fun onItemClick(model: SensorbyID) {
 
-                                                         }
+                                                        }
 
-                                                     }
+                                                    }
                                                 )
                                             }
                                         }
@@ -389,10 +390,12 @@ class MapFragment : Fragment() {
         })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        googleMap.clear()
-        i("TEKS33","TEkSt555")
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (googleMap!=null){
+            googleMap.clear()
+        }
     }
 //    private fun getDataFromApi() {
 //
