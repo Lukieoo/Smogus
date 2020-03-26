@@ -1,6 +1,7 @@
 package com.anioncode.smogu.Fragments
 
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.i
@@ -9,19 +10,29 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
+import com.anioncode.smogu.Adapter.SensorAdapter
+import com.anioncode.smogu.Adapter.SensorChartAdapter
 import com.anioncode.smogu.CONST.MyPreference
+import com.anioncode.smogu.CONST.MyVariables
+import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
+import com.anioncode.smogu.Model.ChartPart
 import com.anioncode.smogu.Model.ModelSensorId.SensorbyID
 import com.anioncode.smogu.R
 import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.EntryXComparator
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_chart.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -57,11 +68,22 @@ class ChartFragment : Fragment() {
             nameProvince.text = myPreference.getSTATION_PROVINCE()
         }
 
+//        lineChartView.setNoDataTextTypeface(Typeface.SANS_SERIF)
+//        lineChartView.setNoDataText("");
+//        lineChartView.setTouchEnabled(true)
+//        lineChartView.setPinchZoom(false)
+//        lineChartView.setNoDataTextColor(ContextCompat.getColor(requireContext(), R.color.colorbdb))
+//        lineChartView.getLegend().setEnabled(false);
+//        lineChartView.getAxisRight().setDrawLabels(false);
+//        lineChartView.getAxisLeft().setDrawGridLines(false);
+//        lineChartView.getXAxis().setDrawGridLines(false);
+//        lineChartView.description.text = ""
+//        lineChartView.setExtraBottomOffset(35f);
 
-        getDataStation()
+        //getDataStation()
 
 
-
+        getDataRecyclerStation()
 
 //        xAxis.valueFormatter = object : ValueFormatter() {
 //
@@ -81,105 +103,163 @@ class ChartFragment : Fragment() {
 //        lineChartView.axisLeft.mAxisRange = 2f
 
 
-        lineChartView.invalidate()
+        // lineChartView.invalidate()
 
 
     }
 
-    private fun getDataStation() {
 
-        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+    private fun getDataRecyclerStation() { ///Wypełnianie Recycler Viewa wykresami z danymi
 
-        api.getSensor("92")
-            .enqueue(object : Callback<SensorbyID> {
+        val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+        var chartPart = ArrayList<ChartPart>()
 
-                override fun onResponse(
-                    call: Call<SensorbyID>,
-                    response: Response<SensorbyID>
-                ) {
+        myChartsRec.apply {
 
+            layoutManager = LinearLayoutManager(
+                activity,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            adapter =
+                SensorChartAdapter(chartPart, activity!!);
+        }
+        for (local in sensorIDList) {
+            service.getSensorRX(local).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ findall ->
 
-                    var modelIndexs: SensorbyID? =response.body()
+                    var modelIndexs: SensorbyID? = findall
 
-//                    modelIndexs= response.body()!!
+                    val entriess = ArrayList<Entry>()
+                    var i = 0;
 
-                    activity?.runOnUiThread {
-                        //Part1
-                        val entries = ArrayList<Entry>()
-                        var i=0;
-                        for(value in modelIndexs?.values!!){
-                            var date:Date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value.date)
+                    for (value in modelIndexs?.values!!) {
+                        var date: Date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value.date)
 //                            i("455F","${date.time}")
-                            var setlong:Float=if(value.value!=null)value.value.toInt().toFloat()else 0f
-                            entries.add(Entry(date.time.toFloat()/1000,setlong ))
-                            i++
-                            if (i==5){
-                                break;
-                            }
+                        var setlong: Float =
+                            if (value.value != null) value.value.toInt().toFloat() else 0f
+                        entriess.add(Entry(date.time.toFloat() / 1000, setlong))
+                        i++
+                        if (i == 7) {
+                            break;
                         }
-                        Collections.sort(entries, EntryXComparator())
+                    }
 
+                    if (entriess.size>0){
+                    Collections.sort(entriess, EntryXComparator())
+                        var k=0
 
+                    for (adek in entriess){
+                        if (adek.y==0f){
+                            entriess.removeAt(k)
 
-
-
-                        val lineDataSet1 = LineDataSet(entries, "")
-                        lineDataSet1.apply {
-                            color = ContextCompat.getColor(requireContext(), R.color.colorbdb)
-
-                            disableDashedLine()
-                            setDrawFilled(true)
-
-                            lineWidth = 2f
-                            setCircleColor(R.color.colorGreen)
-                            fillColor = ContextCompat.getColor(requireContext(), R.color.colorbdb)
-                            setDrawValues(false)
-                            setAxisDependency(YAxis.AxisDependency.RIGHT)
+                        }else{
+                            k++
                         }
+                        i("8kssid $local", "${adek.x}")
+                    }
 
-                        lineChartView.xAxis.labelRotationAngle = 0f
 
-                        lineChartView.getAxisLeft().setDrawGridLines(false);
-                        lineChartView.getXAxis().setDrawGridLines(false);
+                    chartPart.add(ChartPart(modelIndexs.key, entriess))
 
-                        // lineChartView.getAxisLeft().setDrawLabels(false);
-                        lineChartView.getAxisRight().setDrawLabels(false);
-                        //  lineChartView.getXAxis().setDrawLabels(false);
-                        lineChartView.getLegend().setEnabled(false);
-                        // lineChartView.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.colorbdb))
-                        lineChartView.data = LineData(lineDataSet1)
-                        lineChartView.setTouchEnabled(false)
-                        lineChartView.setPinchZoom(false)
-                        lineChartView.description.text = ""
-                        lineChartView.animateX(1000, Easing.EaseInExpo)
-                        val xAxis: XAxis = lineChartView.getXAxis()
-                        xAxis.position = XAxis.XAxisPosition.BOTTOM
+                    myChartsRec.adapter!!.notifyDataSetChanged()
 
-                      //  xAxis.setLabelRotationAngle(-45f);
 
-//                        xAxis.valueFormatter = object : ValueFormatter() {
-//
-//                            override fun getFormattedValue(value: Float): String {
-//
-//                                i("MSSG34","${value.toInt()}")
-//                                val date = Date(value.toLong())
-//                                // format of the date
-//                                val jdf = SimpleDateFormat("HH:MM", Locale.getDefault())
-//                                jdf.timeZone = TimeZone.getDefault()
-//
-//                                return jdf.format(date)
-//                            }
-//                        }
 
                     }
-                }
+                }, { t ->
+                    t.message
+                })
+        }
 
-                override fun onFailure(call: Call<SensorbyID>, t: Throwable) {
-                    Log.d("MainActivity1313x: ", "Call  ${t.message}")
-
-                }
-
-            })
     }
-
 }
+//    private fun getDataStation() {
+//
+//        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+//
+//        api.getSensor(if (!myPreference.getSENSORID().toString().equals("")) myPreference.getSENSORID().toString() else "92")
+//            .enqueue(object : Callback<SensorbyID> {
+//
+//                override fun onResponse(
+//                    call: Call<SensorbyID>,
+//                    response: Response<SensorbyID>
+//                ) {
+//
+//
+//                    var modelIndexs: SensorbyID? = response.body()
+//
+//                    activity?.runOnUiThread {
+//
+//
+//                        //Part1
+//                        val entries = ArrayList<Entry>()
+//                        var i = 0;
+//                        for (value in modelIndexs?.values!!) {
+//                            var date: Date =
+//                                SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value.date)
+////                            i("455F","${date.time}")
+//                            var setlong: Float =
+//                                if (value.value != null) value.value.toInt().toFloat() else 0f
+//                            entries.add(Entry(date.time.toFloat() / 1000, setlong))
+//                            i++
+//                            if (i == 7) {
+//                                break;
+//                            }
+//                        }
+//                        Collections.sort(entries, EntryXComparator())
+//
+//
+//                        val lineDataSet1 = LineDataSet(entries, "")
+//                        lineDataSet1.apply {
+//                            color = ContextCompat.getColor(requireContext(), R.color.colorbdb)
+//                            disableDashedLine()
+//                            setDrawFilled(true)
+//
+//                            lineWidth = 2f
+//                            setCircleColor(R.color.colorGreen)
+//                            fillColor = ContextCompat.getColor(requireContext(), R.color.colorbdb)
+//                            setDrawValues(false)
+//                            setAxisDependency(YAxis.AxisDependency.RIGHT)
+//                            mode = LineDataSet.Mode.CUBIC_BEZIER
+//                        }
+//
+//
+//                        lineChartView.data = LineData(lineDataSet1)
+//
+//                        lineChartView.animateX(
+//                            1000,
+//                            Easing.getEasingFunctionFromOption(Easing.EasingOption.EaseInExpo)
+//                        )
+//                        lineChartView.invalidate()
+//                        val xAxis: XAxis = lineChartView.getXAxis()
+//                        xAxis.position = XAxis.XAxisPosition.BOTTOM
+//
+//                        val xAxisFormatter = object : IndexAxisValueFormatter() {
+//                            override fun getFormattedValue(value: Float, axis: AxisBase?): String {
+//                                val format = SimpleDateFormat("HH:mm")
+//                                return format.format(Date(value.toLong() * 1000L))
+//                            }
+//
+//                        }
+//
+//                        with(xAxis) {
+//                            valueFormatter = xAxisFormatter
+//                            setLabelCount(5)
+//                        }
+//
+//                        xAxis.textColor = ContextCompat.getColor(requireContext(), R.color.colorbdb)
+//                        //  xAxis.setLabelRotationAngle(-90f);
+//
+//
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<SensorbyID>, t: Throwable) {
+//                    Log.d("MainActivity1313x: ", "Call  ${t.message}")
+//
+//                }
+//
+//            })
+//    }

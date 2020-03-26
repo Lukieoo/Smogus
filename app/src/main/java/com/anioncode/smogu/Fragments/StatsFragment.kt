@@ -16,6 +16,7 @@ import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Adapter.SensorAdapter
 import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.CONST.MyVariables
+import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorbyIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorsNameList
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
@@ -120,7 +121,7 @@ class StatsFragment : Fragment() {
                         jakosc.setTextColor(resources.getColor(color))
                     }
 
-                    println("${response.body()} ttttttttttttttttttt")
+
                 }
 
                 override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
@@ -133,8 +134,6 @@ class StatsFragment : Fragment() {
 
     private fun getDataStationSensor() {
         sensorbyIDList = ArrayList<SensorbyID>()//inicjalizacja danych mapy
-
-
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
 
         api.getData(if (!myPreference.getID().equals("")) myPreference.getID() else "14")
@@ -144,14 +143,19 @@ class StatsFragment : Fragment() {
                     call: Call<List<SensorsName>>,
                     response: Response<List<SensorsName>>
                 ) {
-
                     sensorsNameList = response.body()!!
-
-                    myPreference.setSENSORID(sensorsNameList.get(0).id.toString())
-
                     activity?.runOnUiThread {
+                        sensorIDList.clear()
                         for (sensorsName in sensorsNameList) {
 
+                            sensorIDList.add(sensorsName.id.toString())
+
+//                            if (sensorsName.param.paramCode.equals("PM10")) {
+//
+//                                myPreference.setSENSORID(sensorsName.id.toString())
+//                                println("${sensorsName.id} MS897")
+//
+//                            }
                             api.getSensor(sensorsName.id.toString())
                                 .enqueue(object : Callback<SensorbyID> {
 
@@ -160,11 +164,8 @@ class StatsFragment : Fragment() {
                                         response: Response<SensorbyID>
                                     ) {
                                         sensorbyIDList.add(response.body()!!)
-
-
                                         if (sensorbyIDList.size > 0) {
-
-
+                                            print(sensorbyIDList)
                                             activity?.runOnUiThread {
                                                 RecyclerView.apply {
                                                     layoutManager = LinearLayoutManager(
@@ -186,9 +187,7 @@ class StatsFragment : Fragment() {
                                 })
                         }
                     }
-
                 }
-
                 override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
 
                 }

@@ -25,6 +25,7 @@ import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.Model.ModelAll.FindAll
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
+import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
 import com.anioncode.smogu.Model.ModelSensor.SensorsName
@@ -50,7 +51,8 @@ class MapFragment : Fragment() {
 
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
-
+    lateinit var sensorId:String
+    lateinit var sensorIDListNotStatic: ArrayList<String>
     //    lateinit var stationList: List<FindAll>
 //    lateinit var sensorsNameList: List<SensorsName>
 //    lateinit var modelIndexList: ArrayList<ModelIndex>
@@ -111,6 +113,7 @@ class MapFragment : Fragment() {
     }
 
     private fun setMapFragment(Poland: LatLngBounds) {
+        sensorIDListNotStatic =ArrayList<String>()
         mapFragment = childFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
@@ -135,16 +138,17 @@ class MapFragment : Fragment() {
                             rel.visibility = View.VISIBLE
 
                             googleMap.setOnInfoWindowClickListener {
-
-
                             }
 
-                            choose.setOnClickListener {
+                                  choose.setOnClickListener {
                                 val myPreference: MyPreference = MyPreference(requireContext())
                                 myPreference.setID(marker?.getSnippet())
                                 myPreference.setSTATION_NAME(findAll.stationName)
                                 myPreference.setSTATION_STREET(findAll.addressStreet)
                                 myPreference.setSTATION_PROVINCE(findAll.city.commune.provinceName)
+                               // myPreference.setSENSORID(sensorId)
+                                      sensorIDList.clear()
+                                      sensorIDList=sensorIDListNotStatic
 
                                 Toast.makeText(activity, "Wybrano stację", Toast.LENGTH_LONG).show()
 
@@ -327,9 +331,14 @@ class MapFragment : Fragment() {
             ) {
 
                 MyVariables.sensorsNameList = response.body()!!
-
+                sensorIDListNotStatic.clear()
                 activity?.runOnUiThread {
                     for (sensorsName in MyVariables.sensorsNameList) {
+
+                        sensorIDListNotStatic.add(sensorsName.id.toString())
+//                        if(sensorsName.param.paramCode.equals("PM10")){
+//                            sensorId=sensorsName.id.toString()
+//                        }
 
                         api.getSensor(sensorsName.id.toString())
                             .enqueue(object : Callback<SensorbyID> {

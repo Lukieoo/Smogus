@@ -40,9 +40,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_dash)
 
         MyVariables.modelIndexList = ArrayList<ModelIndex>()//inicjalizacja danych mapy
+        MyVariables.sensorIDList = ArrayList<String>()//inicjalizacja danych mapy
 
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         setPermission()
+
         service.findAllRX().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ findall ->
@@ -52,8 +54,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 for (findAllModel in stationList) {
                     service.getIndexRX(findAllModel.id.toString()).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            model ->  modelIndexList.add(model)
+                        .subscribe({ model ->
+                            modelIndexList.add(model)
                             println("moveIN ${modelIndexList.size}")
                         }, {
 
@@ -104,19 +106,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         sync.setOnClickListener {
             sync.playAnimation()
         }
+
         sync.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationRepeat(p0: Animator?) {
 
             }
 
             override fun onAnimationEnd(p0: Animator?) {
-                var frg: Fragment? = null
-                frg = supportFragmentManager.findFragmentByTag("SOMETAG")
-                val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-                frg?.let { ft.detach(it) }
-                frg?.let { ft.attach(it) }
-                ft.commit()
-                sync.pauseAnimation()
+
             }
 
             override fun onAnimationCancel(p0: Animator?) {
@@ -125,9 +122,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onAnimationStart(p0: Animator?) {
 
-                val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-                stationList= emptyList()
-                sizedApplication=0
+                val service =
+                    RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+                stationList = emptyList()
+                sizedApplication = 0
                 modelIndexList.clear()
 
                 service.findAllRX().subscribeOn(Schedulers.io())
@@ -136,15 +134,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                         stationList = findall
                         sizedApplication = stationList.size
+                        var k: Int = 0;
                         for (findAllModel in stationList) {
-                            service.getIndexRX(findAllModel.id.toString()).subscribeOn(Schedulers.io())
+                            service.getIndexRX(findAllModel.id.toString())
+                                .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({
-                                        model ->  modelIndexList.add(model)
-                                    println("moveIN ${modelIndexList.size}")
+                                .subscribe({ model ->
+                                    modelIndexList.add(model)
+
+                                    k++
+                                    if (k == stationList.size) {
+
+                                        var frg: Fragment? = null
+                                        frg = supportFragmentManager.findFragmentByTag("SOMETAG")
+                                        val ft: FragmentTransaction =
+                                            supportFragmentManager.beginTransaction()
+                                        frg?.let { ft.detach(it) }
+                                        frg?.let { ft.attach(it) }
+                                        ft.commit()
+                                        sync.pauseAnimation()
+                                    }
+                                    println("moveIN $k ${modelIndexList.size}")
                                 }, {
 
                                 })
+
                         }
                     }, { t ->
                         t.message
@@ -153,6 +167,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         })
     }
+
     private fun setPermission() {
         if (ContextCompat.checkSelfPermission(
                 this@MainActivity,
@@ -192,7 +207,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.fragment,
                 InfoFragment(), "SOMETAG"
             ).commit()
-        }else if (id == R.id.stats) {
+        } else if (id == R.id.stats) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 ChartFragment(), "SOMETAG"
