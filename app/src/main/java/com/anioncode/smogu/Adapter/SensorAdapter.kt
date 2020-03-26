@@ -5,18 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.Model.ModelSensorId.SensorbyID
 import com.anioncode.smogu.R
 import kotlinx.android.synthetic.main.item_pomiar.view.*
 
-class SensorAdapter(val items : ArrayList<SensorbyID>, val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+class SensorAdapter(
+    val items: ArrayList<SensorbyID>,
+    val context: Context,
+    var clickListner: OnItemClickListner
+) : RecyclerView.Adapter<ViewHolder>() {
 
     // Gets the number of animals in the list
     override fun getItemCount(): Int {
         return items.size
     }
 
+    interface OnItemClickListner{
+        fun onItemClick(model:SensorbyID)
+    }
     // Inflates the item views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_pomiar, parent, false))
@@ -27,11 +33,17 @@ class SensorAdapter(val items : ArrayList<SensorbyID>, val context: Context) : R
         var model=items.get(position)
         holder?.nameSensor?.text = model.key
         var iter=0;
+
+        holder.itemView.setOnClickListener {
+            clickListner.onItemClick(model)
+
+        }
+
       if (model.values!=null)  {
           for (data in model.values){
               println(data.value);
               println(data.date);
-              println("Ahoj");
+
               if(data.value!=null&&model.values.get(iter).value!=0.0){
 
                   holder?.nameSensorPomiar?.text = model.values.get(iter).value.toInt().toString()

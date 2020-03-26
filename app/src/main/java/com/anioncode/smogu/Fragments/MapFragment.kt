@@ -1,20 +1,17 @@
 package com.anioncode.smogu.Fragments
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import android.util.Log.i
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
@@ -22,11 +19,8 @@ import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Adapter.SensorAdapter
 import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.CONST.MyVariables
-import com.anioncode.smogu.Model.ModelAll.FindAll
-import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
-import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
 import com.anioncode.smogu.Model.ModelSensor.SensorsName
 import com.anioncode.smogu.Model.ModelSensorId.SensorbyID
@@ -149,6 +143,9 @@ class MapFragment : Fragment() {
                                // myPreference.setSENSORID(sensorId)
                                       sensorIDList.clear()
                                       sensorIDList=sensorIDListNotStatic
+
+                                      getFragmentManager()?.beginTransaction()
+                                          ?.replace(R.id.fragment, StatsFragment(), "SOMETAG")?.commit();
 
                                 Toast.makeText(activity, "Wybrano stację", Toast.LENGTH_LONG).show()
 
@@ -300,7 +297,7 @@ class MapFragment : Fragment() {
                     if (modelIndex.pm10IndexLevel != null) {
                         googleMap.addMarker(
 
-                            MarkerOptions().position(location).title(modelIndex.pm10IndexLevel.indexLevelName).snippet(
+                            MarkerOptions().position(location).title(modelIndex.stIndexLevel.indexLevelName).snippet(
                                 FindAll.id.toString()
                             ).icon(
                                 context?.let {
@@ -362,8 +359,14 @@ class MapFragment : Fragment() {
                                                 )
                                                 adapter = SensorAdapter(
                                                     MyVariables.sensorbyIDList,
-                                                    activity!!
-                                                );
+                                                    activity!!,
+                                                     clickListner = object :SensorAdapter.OnItemClickListner{
+                                                         override fun onItemClick(model: SensorbyID) {
+
+                                                         }
+
+                                                     }
+                                                )
                                             }
                                         }
                                     }
@@ -386,6 +389,11 @@ class MapFragment : Fragment() {
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        googleMap.clear()
+        i("TEKS33","TEkSt555")
+    }
 //    private fun getDataFromApi() {
 //
 //        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)

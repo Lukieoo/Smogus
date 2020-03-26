@@ -18,7 +18,7 @@ data class ModelIndex(
     val pm10IndexLevel: Pm10IndexLevel,
     val pm10SourceDataDate: String,
     val pm25CalcDate: String,
-    val pm25IndexLevel: Any,
+    val pm25IndexLevel: Pm25IndexLevel,
     val pm25SourceDataDate: Any,
     val so2CalcDate: String,
     val so2IndexLevel: So2IndexLevel,

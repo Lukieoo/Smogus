@@ -118,7 +118,7 @@ class SensorChartAdapter(val items: ArrayList<ChartPart>, val context: Context) 
         holder.chartSensor.data = LineData(lineDataSet1)
 
         holder.chartSensor.animateX(
-            1000,
+            500,
             Easing.getEasingFunctionFromOption(Easing.EasingOption.EaseInExpo)
         )
         holder.chartSensor.invalidate()
@@ -135,7 +135,7 @@ class SensorChartAdapter(val items: ArrayList<ChartPart>, val context: Context) 
 
         with(xAxis) {
             valueFormatter = xAxisFormatter
-            setLabelCount(7)
+            setLabelCount(model.entries.size)
         }
 
         xAxis.textColor = color2

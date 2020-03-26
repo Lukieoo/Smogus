@@ -9,13 +9,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Adapter.SensorAdapter
 import com.anioncode.smogu.CONST.MyPreference
-import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorbyIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorsNameList
@@ -56,7 +55,7 @@ class StatsFragment : Fragment() {
 
         if (isOnline(requireContext()))
 
-            getDataStation()
+            getDataStation("ST")
 
 
 
@@ -73,9 +72,9 @@ class StatsFragment : Fragment() {
 
     }
 
-    private fun getDataStation() {
+    private fun getDataStation(Id: String) {
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-
+        jakosc.visibility=View.INVISIBLE
         api.getIndex(if (!myPreference.getID().toString().equals("")) myPreference.getID().toString() else "14")
             .enqueue(object : Callback<ModelIndex> {
 
@@ -86,39 +85,61 @@ class StatsFragment : Fragment() {
                     var color: Int =
                         R.color.colorbdb
                     modelIndex = response.body()!!
+                    var nameLevel:String=""
 
-                    if (modelIndex.pm10IndexLevel != null) {
-                        when (modelIndex.pm10IndexLevel.id) {
-                            0 -> {
-                                color =
-                                    R.color.colorbdb
+                    when (Id) {
+
+                        "PM10" ->
+                            if (modelIndex.pm10IndexLevel != null) {
+                                color = pairColor(modelIndex.pm10IndexLevel.id)
+                                nameLevel=modelIndex.pm10IndexLevel.indexLevelName
                             }
-                            1 -> {
-                                color =
-                                    R.color.colordb
+                        "NO2" ->
+                            if (modelIndex.no2IndexLevel != null) {
+                                color = pairColor(modelIndex.no2IndexLevel.id)
+                                nameLevel=modelIndex.no2IndexLevel.indexLevelName
                             }
-                            2 -> {
-                                color =
-                                    R.color.colordst
+                        "O3" ->
+                            if (modelIndex.o3IndexLevel != null) {
+                                color = pairColor(modelIndex.o3IndexLevel.id)
+                                nameLevel=modelIndex.o3IndexLevel.indexLevelName
                             }
-                            3 -> {
-                                color =
-                                    R.color.colordop
+                        "SO2" ->
+                            if (modelIndex.so2IndexLevel != null) {
+                                color = pairColor(modelIndex.so2IndexLevel.id)
+                                nameLevel=modelIndex.so2IndexLevel.indexLevelName
                             }
-                            4 -> {
-                                color =
-                                    R.color.colorndst
+                        "C6H6" ->
+                            if (modelIndex.c6h6IndexLevel != null) {
+                                color = pairColor(modelIndex.c6h6IndexLevel.id)
+                                nameLevel=modelIndex.c6h6IndexLevel.indexLevelName
                             }
-                            else -> {
-                                color =
-                                    R.color.colorndst
+                        "ST" ->
+                            if (modelIndex.stIndexLevel != null) {
+                                color = pairColor(modelIndex.stIndexLevel.id)
+                                nameLevel=modelIndex.stIndexLevel.indexLevelName
+                            }
+                        "PM2.5" ->
+                            if (modelIndex.pm25IndexLevel != null) {
+                                color = pairColor(modelIndex.pm25IndexLevel.id)
+                                nameLevel=modelIndex.pm25IndexLevel.indexLevelName
+                            }
+
+
+                        else -> {
+                            if (modelIndex.stIndexLevel != null) {
+                                color = pairColor(modelIndex.stIndexLevel.id)
+                                nameLevel=modelIndex.stIndexLevel.indexLevelName
+
                             }
                         }
+
                     }
 
                     activity?.runOnUiThread {
-                        jakosc.text = modelIndex.stIndexLevel.indexLevelName
+                        jakosc.text =nameLevel
                         jakosc.setTextColor(resources.getColor(color))
+                        jakosc.visibility=View.VISIBLE
                     }
 
 
@@ -130,6 +151,37 @@ class StatsFragment : Fragment() {
                 }
 
             })
+    }
+
+    fun pairColor(model: Int): Int {
+        var color1: Int
+        when (model) {
+            0 -> {
+                color1 =
+                    R.color.colorbdb
+            }
+            1 -> {
+                color1 =
+                    R.color.colordb
+            }
+            2 -> {
+                color1 =
+                    R.color.colordst
+            }
+            3 -> {
+                color1 =
+                    R.color.colordop
+            }
+            4 -> {
+                color1 =
+                    R.color.colorndst
+            }
+            else -> {
+                color1 =
+                    R.color.colorndst
+            }
+        }
+        return color1
     }
 
     private fun getDataStationSensor() {
@@ -174,7 +226,20 @@ class StatsFragment : Fragment() {
                                                         false
                                                     )
                                                     adapter =
-                                                        SensorAdapter(sensorbyIDList, activity!!);
+                                                        SensorAdapter(
+                                                            sensorbyIDList,
+                                                            activity!!,
+                                                            clickListner = object :
+                                                                SensorAdapter.OnItemClickListner {
+                                                                override fun onItemClick(model: SensorbyID) {
+                                                                    partJakosc.text =
+                                                                        "Ocena jakości ${model.key}:"
+                                                                    getDataStation(model.key)
+
+                                                                }
+
+                                                            }
+                                                        );
                                                 }
                                             }
                                         }
@@ -188,6 +253,7 @@ class StatsFragment : Fragment() {
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
 
                 }

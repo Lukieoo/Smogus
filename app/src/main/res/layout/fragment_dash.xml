@@ -156,7 +156,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
             android:fontFamily="@font/productsansmedium"
-            android:text="Ocena jakości PM10:"
+            android:text="Ocena jakości ogólna:"
             android:textSize="16sp" />
 
         <androidx.cardview.widget.CardView
