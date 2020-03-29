@@ -5,8 +5,9 @@
     android:orientation="horizontal">
 
     <TextView
+        android:fontFamily="@font/productsansmedium"
         android:layout_centerVertical="true"
-        android:text="tekst"
+        android:text=""
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
