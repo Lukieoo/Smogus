@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,20 +18,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
+import com.anioncode.smogu.Adapter.SpinnerAdapter
 import com.anioncode.smogu.CONST.MyVariables
+import com.anioncode.smogu.CONST.MyVariables.Companion.SELECTED
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
-import com.anioncode.smogu.Fragments.ChartFragment
-import com.anioncode.smogu.Fragments.InfoFragment
-import com.anioncode.smogu.Fragments.MapFragment
-import com.anioncode.smogu.Fragments.StatsFragment
+import com.anioncode.smogu.Fragments.*
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
 import com.google.android.material.navigation.NavigationView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_dash.*
+import java.security.AccessController.getContext
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -44,6 +46,47 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         setPermission()
+
+        val nameSensor = arrayOf(
+            "ST",
+            "PM10",
+            "PM2.5",
+            "CO",
+            "C6H6",
+            "O3",
+            "SO2",
+            "NO2"
+        )
+
+
+
+
+        spinner.adapter = SpinnerAdapter(applicationContext, nameSensor)
+
+        spinner?.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                stationList = emptyList()
+                sizedApplication = 0
+                modelIndexList.clear()
+
+                SELECTED = nameSensor.get(position);
+
+            } // to close the onItemSelected
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                SELECTED = "ST"
+            }
+
+        });
+
+
+
 
         service.findAllRX().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -141,7 +184,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ model ->
                                     modelIndexList.add(model)
-
                                     k++
                                     if (k == stationList.size) {
 
@@ -197,21 +239,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.fragment,
                 StatsFragment(), "SOMETAG"
             ).commit()
+            spinner.visibility =View.GONE
         } else if (id == R.id.maps) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 MapFragment(), "SOMETAG"
             ).commit()
+            spinner.visibility =View.VISIBLE
         } else if (id == R.id.info) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 InfoFragment(), "SOMETAG"
             ).commit()
+            spinner.visibility =View.GONE
         } else if (id == R.id.stats) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 ChartFragment(), "SOMETAG"
             ).commit()
+            spinner.visibility =View.GONE
+        } else if (id == R.id.about) {
+            supportFragmentManager.beginTransaction().replace(
+                R.id.fragment,
+                AboutFragment(), "SOMETAG"
+            ).commit()
+            spinner.visibility =View.GONE
         }
 
         drawer.closeDrawer(GravityCompat.START)

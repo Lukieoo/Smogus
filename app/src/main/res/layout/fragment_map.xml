@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
+
     <fragment
         android:id="@+id/fragment"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -13,77 +14,217 @@
 
     <RelativeLayout
         android:id="@+id/RelativeLoader"
-        android:elevation="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorWhite">
+        android:background="@color/colorWhite"
+        android:elevation="20dp">
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/splash"
-            android:layout_margin="40dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="40dp"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/loadingmap" />
+
         <TextView
-            android:visibility="gone"
             android:id="@+id/progress"
-            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pom"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:layout_marginTop="50dp"
             android:fontFamily="@font/futura"
             android:text="0 %"
-            android:layout_below="@id/pom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/pom"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
     </RelativeLayout>
+
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/rel"
-        android:layout_marginBottom="-35dp"
-        android:layout_above="@+id/fab"
-        android:elevation="1dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/fab"
+        android:layout_marginBottom="-35dp"
+        android:elevation="1dp"
+        android:visibility="gone">
+
         <Button
-            android:text="Wybierz stację"
-            android:backgroundTint="@color/colorPrimary"
             android:id="@+id/choose"
-            android:layout_margin="4dp"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="4dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:text="Wybierz stację" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_below="@id/choose"
             android:id="@+id/RecyclerView"
             android:layout_width="match_parent"
             android:layout_height="120dp"
+            android:layout_below="@id/choose"
 
             android:orientation="horizontal"
             tools:listitem="@layout/item_pomiar" />
     </RelativeLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:elevation="2dp"
         android:id="@+id/fab"
         style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorWhite"
-        app:borderWidth="0dp"
-        app:srcCompat="@drawable/poland"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:layout_alignParentBottom="true"
-        />
+        android:backgroundTint="@color/colorWhite"
+        android:elevation="2dp"
+        app:borderWidth="0dp"
+        app:srcCompat="@drawable/poland" />
+
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="70dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginTop="50dp"-->
+<!--        android:layout_marginBottom="50dp"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:elevation="29dp">-->
+
+<!--        <LinearLayout-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:gravity="center"-->
+<!--            android:orientation="vertical">-->
+
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="2dp"-->
+<!--                app:cardCornerRadius="2dp">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_margin="2dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/namesensor1"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:layout_margin="4dp"-->
+<!--                        android:fontFamily="@font/productsansmedium"-->
+<!--                        android:text="ST"-->
+<!--                        android:textSize="16sp" />-->
+<!--                </RelativeLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="2dp"-->
+<!--                app:cardCornerRadius="2dp">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_margin="2dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/namesensor2"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:layout_margin="4dp"-->
+<!--                        android:fontFamily="@font/productsansmedium"-->
+<!--                        android:text="PM2.5"-->
+<!--                        android:textSize="16sp" />-->
+<!--                </RelativeLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="2dp"-->
+<!--                app:cardCornerRadius="2dp">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_margin="2dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/namesensor3"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:layout_margin="4dp"-->
+<!--                        android:fontFamily="@font/productsansmedium"-->
+<!--                        android:text="PM10"-->
+<!--                        android:textSize="16sp" />-->
+<!--                </RelativeLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="2dp"-->
+<!--                app:cardCornerRadius="2dp">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_margin="2dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/namesensor4"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:layout_margin="4dp"-->
+<!--                        android:fontFamily="@font/productsansmedium"-->
+<!--                        android:text="CO"-->
+<!--                        android:textSize="16sp" />-->
+<!--                </RelativeLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="2dp"-->
+<!--                app:cardCornerRadius="2dp">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_margin="2dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/namesensor5"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:layout_margin="4dp"-->
+<!--                        android:fontFamily="@font/productsansmedium"-->
+<!--                        android:text="NO2"-->
+<!--                        android:textSize="16sp" />-->
+<!--                </RelativeLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--        </LinearLayout>-->
+<!--    </RelativeLayout>-->
 
     <!--    app:tint="@null"-->
 </RelativeLayout>

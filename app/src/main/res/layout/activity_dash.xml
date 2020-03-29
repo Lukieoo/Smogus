@@ -25,6 +25,13 @@
                 android:id="@+id/anim"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+                <Spinner
+                    android:visibility="gone"
+                    android:id="@+id/spinner"
+                    android:layout_marginLeft="60dp"
+                    android:layout_marginRight="60dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/sync"
                     android:layout_width="30dp"

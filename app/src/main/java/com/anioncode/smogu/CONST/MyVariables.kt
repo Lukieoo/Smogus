@@ -14,6 +14,7 @@ class MyVariables {
         var sizedApplication: Int = 0
         lateinit var sensorbyIDList: ArrayList<SensorbyID>
         lateinit var modelIndexList: ArrayList<ModelIndex>
+        lateinit var SELECTED: String
 
         lateinit var sensorIDList: ArrayList<String>
     }

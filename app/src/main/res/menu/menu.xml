@@ -20,7 +20,12 @@
     <item
         android:id="@+id/info"
         android:icon="@drawable/info"
-        android:title="info"
+        android:title="Informacje"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/about"
+        android:icon="@drawable/developer"
+        android:title="O programie"
         app:showAsAction="ifRoom"></item>
 
 </menu>

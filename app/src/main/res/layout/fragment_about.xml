@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="2dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/productsansmedium"
+                    android:text="Wersja X.X"
+                    android:textSize="17sp" />
+
+                <TextView
+
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/productsanslight"
+                    android:text="01.04.2020" />
+
+                <ImageView
+                    android:id="@+id/update"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_below="@id/title"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/draw" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/update"
+                    android:fontFamily="@font/productsanslight"
+                    android:padding="8dp"
+                    android:text="Przedstawione dane to rzetelne informacje o aktualnym poziomie zanieczyszczeń w Polsce. Dane pozyskane są z głownych stacji GIOŚ .\n\n Aktualna wersja umożliwia : \n- Ustawienie lokalizacji stacji\n- Mapa pomiarów \n- Dostępny widget Aplikacji" />
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/button2"
+            android:elevation="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/main"
+
+            android:layout_margin="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/productsansmedium"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="Kontakt"
+                    android:textIsSelectable="true"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/productsanslight"
+
+                    android:padding="4dp"
+                    android:text="W przypadku wystąpienia błędów , zapytań. Zapraszam do kontaktu na poniższy email lub po prostu kliknij w 'Zgłoś błąd'."
+                    android:textIsSelectable="true"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/productsansmedium"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="pawkrzysciak@gmail.com"
+                    android:textIsSelectable="true"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <Button
+            android:id="@+id/buttonsend"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button2"
+            android:layout_margin="10dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="Zgłoś błąd"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+
+
+</ScrollView>
