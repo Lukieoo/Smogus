@@ -47,50 +47,50 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         setPermission()
 
-        val nameSensor = arrayOf(
-            "Wybierz",
-            "ST",
-            "PM10",
-            "PM2.5",
-            "CO",
-            "C6H6",
-            "O3",
-            "SO2",
-            "NO2"
-        )
-
-
-
-
-        spinner.adapter = SpinnerAdapter(applicationContext, nameSensor)
-        spinner.setSelection(0, false);
-        spinner?.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-
-                SELECTED = nameSensor.get(position);
-
-                var frg: Fragment? = null
-                frg = supportFragmentManager.findFragmentByTag("SOMETAG")
-                val ft: FragmentTransaction =
-                    supportFragmentManager.beginTransaction()
-                frg?.let { ft.detach(it) }
-                frg?.let { ft.attach(it) }
-                ft.commit()
-                sync.pauseAnimation()
-
-            } // to close the onItemSelected
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                SELECTED = "ST"
-            }
-
-        });
+//        val nameSensor = arrayOf(
+//            "Wybierz",
+//            "ST",
+//            "PM10",
+//            "PM2.5",
+//            "CO",
+//            "C6H6",
+//            "O3",
+//            "SO2",
+//            "NO2"
+//        )
+//
+//
+//
+//
+//        spinner.adapter = SpinnerAdapter(applicationContext, nameSensor)
+//        spinner.setSelection(0, false);
+//        spinner?.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+//
+//            override fun onItemSelected(
+//                parent: AdapterView<*>,
+//                view: View?,
+//                position: Int,
+//                id: Long
+//            ) {
+//
+//                SELECTED = nameSensor.get(position);
+//
+//                var frg: Fragment? = null
+//                frg = supportFragmentManager.findFragmentByTag("SOMETAG")
+//                val ft: FragmentTransaction =
+//                    supportFragmentManager.beginTransaction()
+//                frg?.let { ft.detach(it) }
+//                frg?.let { ft.attach(it) }
+//                ft.commit()
+//                sync.pauseAnimation()
+//
+//            } // to close the onItemSelected
+//
+//            override fun onNothingSelected(p0: AdapterView<*>?) {
+//                SELECTED = "ST"
+//            }
+//
+//        });
 
 
 
@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             override fun onAnimationStart(p0: Animator?) {
-                spinner.setSelection(0)
+             //   spinner.setSelection(0)
                 val service =
                     RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
                 stationList = emptyList()
@@ -247,36 +247,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.fragment,
                 StatsFragment(), "SOMETAG"
             ).commit()
-            spinner.visibility = View.GONE
-            spinner.setSelection(0)
+           // spinner.visibility = View.GONE
+           // spinner.setSelection(0)
         } else if (id == R.id.maps) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 MapFragment(), "SOMETAG"
             ).commit()
-            spinner.visibility = View.VISIBLE
-            spinner.setSelection(0)
+          //  spinner.visibility = View.VISIBLE
+          //  spinner.setSelection(0)
         } else if (id == R.id.info) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 InfoFragment(), "SOMETAG"
             ).commit()
-            spinner.visibility = View.GONE
-            spinner.setSelection(0)
+        //    spinner.visibility = View.GONE
+        //    spinner.setSelection(0)
         } else if (id == R.id.stats) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 ChartFragment(), "SOMETAG"
             ).commit()
-            spinner.visibility = View.GONE
-            spinner.setSelection(0)
+          //  spinner.visibility = View.GONE
+          //  spinner.setSelection(0)
         } else if (id == R.id.about) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 AboutFragment(), "SOMETAG"
             ).commit()
-            spinner.visibility = View.GONE
-            spinner.setSelection(0)
+          //  spinner.visibility = View.GONE
+          //  spinner.setSelection(0)
         }
 
         drawer.closeDrawer(GravityCompat.START)

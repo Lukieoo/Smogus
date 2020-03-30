@@ -15,7 +15,7 @@ class MyVariables {
         lateinit var sensorbyIDList: ArrayList<SensorbyID>
         lateinit var modelIndexList: ArrayList<ModelIndex>
         lateinit var SELECTED: String
-
+        var SENSORNAME: String = "ST"
         lateinit var sensorIDList: ArrayList<String>
     }
 

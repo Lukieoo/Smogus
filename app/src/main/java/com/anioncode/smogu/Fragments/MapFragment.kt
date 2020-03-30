@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
@@ -20,6 +21,7 @@ import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.Adapter.SensorAdapter
 import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.CONST.MyVariables
+import com.anioncode.smogu.CONST.MyVariables.Companion.SENSORNAME
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
@@ -45,13 +47,21 @@ import retrofit2.Response
 class MapFragment : Fragment() {
 
     lateinit var mapFragment: SupportMapFragment
-    lateinit var  googleMap: GoogleMap
-    lateinit var sensorId: String
+    lateinit var googleMap: GoogleMap
+
     lateinit var sensorIDListNotStatic: ArrayList<String>
     //    lateinit var stationList: List<FindAll>
 //    lateinit var sensorsNameList: List<SensorsName>
 //    lateinit var modelIndexList: ArrayList<ModelIndex>
     var iterator = 0;
+
+//    fun newInstance(stan: String): MapFragment {
+//        val args: Bundle = Bundle()
+//        args.putSerializable("stan", stan)
+//        val fragment = MapFragment()
+//        fragment.arguments = args
+//        return fragment
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,9 +70,45 @@ class MapFragment : Fragment() {
         // Inflate the layout for this fragment
         var view: View = inflater.inflate(R.layout.fragment_map, container, false)
 
-
+        view.pomiar.setText(SENSORNAME)
+        view.image.setOnClickListener {
+            if (view.show.visibility == View.VISIBLE) {
+                view.show.visibility = View.INVISIBLE
+            } else {
+                view.show.visibility = View.VISIBLE
+            }
+        }
+//        if (getArguments() != null) {
+//            SENSORNAME = getArguments()!!.getString("stan").toString();
+//
+//        }
         //variable
         val Poland = LatLngBounds(LatLng(47.0, 14.0), LatLng(56.5, 24.3))
+
+        view.st.setOnClickListener {
+            SENSORNAME = "ST"
+            refresh()
+        }
+        view.co.setOnClickListener {
+            SENSORNAME = "CO"
+            refresh()
+        }
+        view.pm10.setOnClickListener {
+            SENSORNAME = "PM10"
+            refresh()
+        }
+        view.pm25.setOnClickListener {
+            SENSORNAME = "PM2.5"
+            refresh()
+        }
+        view.no2.setOnClickListener {
+            SENSORNAME = "NO2"
+            refresh()
+        }
+        view.so2.setOnClickListener {
+            SENSORNAME = "SO2"
+            refresh()
+        }
 
 
         /////////COMMENT________________START
@@ -105,6 +151,16 @@ class MapFragment : Fragment() {
         )
 
         return view
+    }
+
+    private fun refresh() {
+        var frg: Fragment?
+        frg = fragmentManager!!.findFragmentByTag("SOMETAG")
+        val ft: FragmentTransaction =
+            fragmentManager!!.beginTransaction()
+        frg?.let { ft.detach(it) }
+        frg?.let { ft.attach(it) }
+        ft.commit()
     }
 
     private fun setMapFragment(Poland: LatLngBounds) {
@@ -259,57 +315,322 @@ class MapFragment : Fragment() {
                 R.drawable.circle
             for (modelIndex in modelIndexList)
                 if (modelIndex.id.equals(FindAll.id)) {
-                    if (modelIndex.pm10IndexLevel != null) {
-                        when (modelIndex.pm10IndexLevel.id) {
-                            0 -> {
-                                drawable =
-                                    R.drawable.circle
+                    when (SENSORNAME) {
+                        "PM10" -> {
+                            if (modelIndex.pm10IndexLevel != null) {
+                                when (modelIndex.pm10IndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
                             }
-                            1 -> {
-                                drawable =
-                                    R.drawable.circle2
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.pm10IndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.pm10IndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
                             }
-                            2 -> {
-                                drawable =
-                                    R.drawable.circle3
+                        }
+                        "ST" -> {
+                            if (modelIndex.stIndexLevel != null) {
+                                when (modelIndex.stIndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
                             }
-                            3 -> {
-                                drawable =
-                                    R.drawable.circle4
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.stIndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.stIndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
                             }
-                            4 -> {
-                                drawable =
-                                    R.drawable.circle5
+                        }
+                        "PM2.5" -> {
+                            if (modelIndex.pm25IndexLevel != null) {
+                                when (modelIndex.pm25IndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
                             }
-                            5 -> {
-                                drawable =
-                                    R.drawable.circle6
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.pm25IndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.pm25IndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
                             }
-                            else -> {
-                                drawable =
-                                    R.drawable.circle3
+                        }
+                        "CO" -> {
+                            if (modelIndex.coIndexLevel != null) {
+                                when (modelIndex.coIndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
+                            }
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.coIndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.coIndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
+                            }
+                        }
+                        "NO2" -> {
+                            if (modelIndex.no2IndexLevel != null) {
+                                when (modelIndex.no2IndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
+                            }
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.no2IndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.no2IndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
+                            }
+                        }
+                        "SO2" -> {
+                            if (modelIndex.so2IndexLevel != null) {
+                                when (modelIndex.so2IndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
+                            }
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.so2IndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.so2IndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
                             }
                         }
                     }
 
-                    val location =
-                        LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
-                    if (modelIndex.pm10IndexLevel != null) {
-                        googleMap.addMarker(
 
-                            MarkerOptions().position(location).title(modelIndex.stIndexLevel.indexLevelName).snippet(
-                                FindAll.id.toString()
-                            ).icon(
-                                context?.let {
-                                    bitmapDescriptorFromVector(
-                                        it,
-                                        drawable
-                                    )
-                                }
-                            )
-                        )
-
-                    }
                 }
         }
     }
@@ -393,7 +714,7 @@ class MapFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (googleMap!=null){
+        if (googleMap != null) {
             googleMap.clear()
         }
     }
