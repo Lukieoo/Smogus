@@ -2,13 +2,18 @@ package com.anioncode.smogu.Activity
 
 import android.Manifest
 import android.animation.Animator
+import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -18,9 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
-import com.anioncode.smogu.Adapter.SpinnerAdapter
 import com.anioncode.smogu.CONST.MyVariables
-import com.anioncode.smogu.CONST.MyVariables.Companion.SELECTED
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
@@ -28,10 +31,10 @@ import com.anioncode.smogu.Fragments.*
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_dash.*
-import java.security.AccessController.getContext
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -46,6 +49,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         setPermission()
+
+        if (!isOnline(applicationContext)) {
+            Snackbar.make(
+                getWindow().getDecorView(), "Brak połączenia",
+                Snackbar.LENGTH_LONG
+            ).setAction("Action", null).show()
+        }
+
 
 //        val nameSensor = arrayOf(
 //            "Wybierz",
@@ -91,8 +102,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 //
 //        });
-
-
 
 
         service.findAllRX().subscribeOn(Schedulers.io())
@@ -171,7 +180,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             override fun onAnimationStart(p0: Animator?) {
-             //   spinner.setSelection(0)
+                //   spinner.setSelection(0)
                 val service =
                     RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
                 stationList = emptyList()
@@ -247,39 +256,45 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.fragment,
                 StatsFragment(), "SOMETAG"
             ).commit()
-           // spinner.visibility = View.GONE
-           // spinner.setSelection(0)
+            // spinner.visibility = View.GONE
+            // spinner.setSelection(0)
         } else if (id == R.id.maps) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 MapFragment(), "SOMETAG"
             ).commit()
-          //  spinner.visibility = View.VISIBLE
-          //  spinner.setSelection(0)
+            //  spinner.visibility = View.VISIBLE
+            //  spinner.setSelection(0)
         } else if (id == R.id.info) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 InfoFragment(), "SOMETAG"
             ).commit()
-        //    spinner.visibility = View.GONE
-        //    spinner.setSelection(0)
+            //    spinner.visibility = View.GONE
+            //    spinner.setSelection(0)
         } else if (id == R.id.stats) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 ChartFragment(), "SOMETAG"
             ).commit()
-          //  spinner.visibility = View.GONE
-          //  spinner.setSelection(0)
+            //  spinner.visibility = View.GONE
+            //  spinner.setSelection(0)
         } else if (id == R.id.about) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragment,
                 AboutFragment(), "SOMETAG"
             ).commit()
-          //  spinner.visibility = View.GONE
-          //  spinner.setSelection(0)
+            //  spinner.visibility = View.GONE
+            //  spinner.setSelection(0)
         }
 
         drawer.closeDrawer(GravityCompat.START)
     }
 
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
 }

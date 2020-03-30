@@ -109,7 +109,14 @@ class MapFragment : Fragment() {
             SENSORNAME = "SO2"
             refresh()
         }
-
+        view.o3.setOnClickListener {
+            SENSORNAME = "O3"
+            refresh()
+        }
+        view.c6h6.setOnClickListener {
+            SENSORNAME = "C6H6"
+            refresh()
+        }
 
         /////////COMMENT________________START
 //        if (modelIndexList.size == 0 || (sizedApplication) > 0 && sizedApplication != stationList.size) {
@@ -557,6 +564,7 @@ class MapFragment : Fragment() {
                                     }
                                 }
                             }
+
                             val location =
                                 LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
                             if (modelIndex.no2IndexLevel != null) {
@@ -615,6 +623,110 @@ class MapFragment : Fragment() {
                                 googleMap.addMarker(
 
                                     MarkerOptions().position(location).title(modelIndex.so2IndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
+                            }
+                        }
+                        "C6H6" -> {
+                            if (modelIndex.c6h6IndexLevel != null) {
+                                when (modelIndex.c6h6IndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
+                            }
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.c6h6IndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.c6h6IndexLevel.indexLevelName).snippet(
+                                        FindAll.id.toString()
+                                    ).icon(
+                                        context?.let {
+                                            bitmapDescriptorFromVector(
+                                                it,
+                                                drawable
+                                            )
+                                        }
+                                    )
+                                )
+
+                            }
+                        }
+                        "O3" -> {
+                            if (modelIndex.o3IndexLevel != null) {
+                                when (modelIndex.o3IndexLevel.id) {
+                                    0 -> {
+                                        drawable =
+                                            R.drawable.circle
+                                    }
+                                    1 -> {
+                                        drawable =
+                                            R.drawable.circle2
+                                    }
+                                    2 -> {
+                                        drawable =
+                                            R.drawable.circle3
+                                    }
+                                    3 -> {
+                                        drawable =
+                                            R.drawable.circle4
+                                    }
+                                    4 -> {
+                                        drawable =
+                                            R.drawable.circle5
+                                    }
+                                    5 -> {
+                                        drawable =
+                                            R.drawable.circle6
+                                    }
+                                    else -> {
+                                        drawable =
+                                            R.drawable.circle7
+                                    }
+                                }
+                            }
+                            val location =
+                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                            if (modelIndex.o3IndexLevel != null) {
+                                googleMap.addMarker(
+
+                                    MarkerOptions().position(location).title(modelIndex.o3IndexLevel.indexLevelName).snippet(
                                         FindAll.id.toString()
                                     ).icon(
                                         context?.let {

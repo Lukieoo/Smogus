@@ -22,9 +22,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:id="@+id/shortcuts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/productsansmedium"
+                android:paddingBottom="8dp"
 
+                android:text="Używane skróty"
+                android:textSize="22sp" />
+            <TextView
+                android:id="@+id/infoshortcuts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/shortcuts"
+                android:fontFamily="@font/productsanslight"
+                android:paddingBottom="8dp"
+                android:text=" ST (Wynik ogólny)\n CO (tlenku węgla)\n Pył PM2,5\n Pył PM10 \n Dwutlenku azotu (NO2)\n Dwutlenku siarki (SO2)\n Benzenu (C6H6)"
+                android:textSize="14sp"
+                android:textStyle="italic" />
             <TextView
                 android:id="@+id/info"
+                android:layout_below="@+id/infoshortcuts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/productsansmedium"
