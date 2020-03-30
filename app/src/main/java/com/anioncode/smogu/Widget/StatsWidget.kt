@@ -1,20 +1,23 @@
 package com.anioncode.smogu.Widget
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
+import android.os.SystemClock
 import android.util.Log
-import android.view.View
 import android.widget.RemoteViews
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
-import kotlinx.android.synthetic.main.fragment_dash.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 /**
  * Implementation of App Widget functionality.
@@ -54,6 +57,20 @@ internal fun updateAppWidget(
     views.setTextViewText(R.id.nameStation, myPreference.getSTATION_NAME())
 //    views.setTextViewText(R.id.nameLevel, "XD")
     // Instruct the widget manager to update the widget
+
+    val intent = Intent(context, StatsWidget::class.java)
+    val pending = PendingIntent.getService(context, 0, intent, 0)
+    val alarm =
+        context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    alarm.cancel(pending)
+    val interval = 1000 * 60.toLong()
+    alarm.setRepeating(
+        AlarmManager.ELAPSED_REALTIME,
+        SystemClock.elapsedRealtime(),
+        interval,
+        pending
+    )
+
     getDataStation(context,views,appWidgetManager,appWidgetId)
     appWidgetManager.updateAppWidget(appWidgetId, views)
 
