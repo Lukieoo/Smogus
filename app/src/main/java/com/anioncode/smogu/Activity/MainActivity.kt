@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -23,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
+import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         MyVariables.modelIndexList = ArrayList<ModelIndex>()//inicjalizacja danych mapy
         MyVariables.sensorIDList = ArrayList<String>()//inicjalizacja danych mapy
-
+        var syPreference = MyPreference(applicationContext)
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         setPermission()
 
@@ -57,6 +59,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ).setAction("Action", null).show()
         }
 
+        if (syPreference.getFIRST_LOGED()) {
+
+            val builder = AlertDialog.Builder(this@MainActivity)
+            syPreference.setFIRST_LOGED(false)
+            // Set the alert dialog title
+            builder.setTitle("Smoguś")
+            builder.setIcon(resources.getDrawable(R.drawable.draw, null))
+            // Display a message on alert dialog
+            builder.setMessage("Witaj w aplikacji 'Smoguś'  przejdź do mapy i wybierz swoją stację \uD83D\uDE00")
+
+            // Set a positive button and its click listener on alert dialog
+            builder.setPositiveButton("Mapa") { dialog, which ->
+                supportFragmentManager.beginTransaction().replace(
+                    R.id.fragment,
+                    MapFragment(), "SOMETAG"
+                ).commit()
+                dialog.dismiss()
+            }
+
+            // Display a negative button on alert dialog
+            builder.setNegativeButton("Później") { dialog, which ->
+                dialog.cancel()
+            }
+
+
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+
+            // Display the alert dialog on app interface
+            dialog.show()
+        }
 
 //        val nameSensor = arrayOf(
 //            "Wybierz",

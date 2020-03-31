@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/main"
-        android:icon="@drawable/chart"
-        android:title="Statystyki"
-        app:showAsAction="ifRoom"></item>
-    <item
-        android:id="@+id/stats"
-        android:icon="@drawable/statprem"
-        android:title="Wykres"
-        app:showAsAction="ifRoom"></item>
-    <item
-        android:id="@+id/maps"
-        android:icon="@drawable/city"
-        android:title="Mapa"
-        app:showAsAction="ifRoom"></item>
+    <group android:id="@+id/gr1">
+        <item
+            android:id="@+id/main"
+            android:icon="@drawable/chart"
+            android:title="Statystyki"
+            app:showAsAction="ifRoom"></item>
+    </group>
+    <group android:id="@+id/gr2">
+        <item
+            android:id="@+id/stats"
+            android:icon="@drawable/statprem"
+            android:title="Wykres"
+            app:showAsAction="ifRoom"></item>
+    </group>
+    <group android:id="@+id/gr3">
 
-    <item
-        android:id="@+id/info"
-        android:icon="@drawable/info"
-        android:title="Informacje"
-        app:showAsAction="ifRoom"></item>
-    <item
-        android:id="@+id/about"
-        android:icon="@drawable/developer"
-        android:title="O programie"
-        app:showAsAction="ifRoom"></item>
+        <item
+            android:id="@+id/maps"
+            android:icon="@drawable/city"
+            android:title="Mapa"
+            app:showAsAction="ifRoom"></item>
+    </group>
+    <group android:id="@+id/gr4">
+        <item
+            android:id="@+id/info"
+            android:icon="@drawable/info"
+            android:title="Informacje"
+            app:showAsAction="ifRoom"></item>
+    </group>
+    <group android:id="@+id/gr5">
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/developer"
+            android:title="O programie"
+            app:showAsAction="ifRoom"></item>
+    </group>
 
 </menu>

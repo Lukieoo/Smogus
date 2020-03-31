@@ -13,6 +13,8 @@
     <color name="colorWhitetrans">#eeffffff</color>
 
     <color name="colorGreen">#43a047</color>
+    <color name="colorNav">#C7EDE6</color>
+    <color name="colorBlack">#bb000000</color>
 
 
     <color name="colorbdb">#a17cb342</color>

@@ -75,7 +75,7 @@ class StatsFragment : Fragment() {
     private fun getDataStation(Id: String) {
         val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         jakosc.visibility=View.INVISIBLE
-        api.getIndex(if (!myPreference.getID().toString().equals("")) myPreference.getID().toString() else "14")
+        api.getIndex(if (!myPreference.getID().toString().equals("")) myPreference.getID().toString() else "114")
             .enqueue(object : Callback<ModelIndex> {
 
                 override fun onResponse(
