@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
 
-            android:elevation="2dp"
+            android:elevation="5dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
             <RelativeLayout
@@ -54,9 +54,9 @@
         android:background="@color/colorNav"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:itemIconTint="@color/colorBlack"
-        app:itemTextColor="@color/colorBlack"
-
+        app:itemIconTint="@color/colorWhite"
+        app:itemTextColor="@color/colorWhite"
+        android:theme="@style/NavigationDrawerStyle"
         app:menu="@menu/menu"
 
         />
