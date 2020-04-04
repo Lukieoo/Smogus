@@ -32,6 +32,7 @@ import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
 import com.anioncode.smogu.Fragments.*
 import com.anioncode.smogu.Model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var syPreference = MyPreference(applicationContext)
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         setPermission()
+
+        MobileAds.initialize(this) {}
 
         if (!isOnline(applicationContext)) {
             Snackbar.make(
