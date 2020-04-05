@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
         setPermission()
 
-        MobileAds.initialize(this) {}
+
 
         if (!isOnline(applicationContext)) {
             Snackbar.make(
