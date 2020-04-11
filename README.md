@@ -1,5 +1,5 @@
 # Smogus
-
+https://youtu.be/3D22nh299XI
 Aplikacja zanieczyszczenia powietrza
 Użyte biblioteki RxJava
 Kotlin ,
