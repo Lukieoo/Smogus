@@ -1,7 +1,7 @@
  
  
 
-# Smogus
+# Smoguś
 
 >  <a href="https://play.google.com/store/apps/details?id=com.anioncode.smogu&gl=PL">Google Play<a/>
  
