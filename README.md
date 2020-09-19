@@ -15,7 +15,7 @@
 - Kotlin
 - RxJava
 - Retrofit 2
-- <a href="https://powietrze.gios.gov.pl/pjp/content/api">Rest Api</a>
+- <a href="https://powietrze.gios.gov.pl/pjp/content/api">Rest Api used</a>
 - Google Maps Api
 
  
