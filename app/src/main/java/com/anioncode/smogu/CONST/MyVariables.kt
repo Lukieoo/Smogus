@@ -1,9 +1,9 @@
 package com.anioncode.smogu.CONST
 
-import com.anioncode.smogu.Model.ModelAll.FindAll
-import com.anioncode.smogu.Model.ModelIndex.ModelIndex
-import com.anioncode.smogu.Model.ModelSensor.SensorsName
-import com.anioncode.smogu.Model.ModelSensorId.SensorbyID
+import com.anioncode.smogu.model.ModelAll.FindAll
+import com.anioncode.smogu.model.ModelIndex.ModelIndex
+import com.anioncode.smogu.model.ModelSensor.SensorsName
+import com.anioncode.smogu.model.ModelSensorId.SensorbyID
 
 class MyVariables {
 
