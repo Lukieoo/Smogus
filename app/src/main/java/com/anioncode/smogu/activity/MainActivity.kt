@@ -1,10 +1,7 @@
 package com.anioncode.smogu.activity
 
-import android.Manifest
 import android.animation.Animator
-import android.content.Context
-import android.content.pm.PackageManager
-import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
@@ -12,108 +9,76 @@ import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.NavController
+
+import androidx.navigation.findNavController
 import com.anioncode.retrofit2.ApiService
 import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
+import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
-import com.anioncode.smogu.fragments.*
 import com.anioncode.smogu.model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
+import com.anioncode.smogu.events.NavEvent
+import com.anioncode.smogu.presenters.MainActivityPresenter
+import com.anioncode.smogu.utils.SystemUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.processors.PublishProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_dash.*
+import kotlinx.android.synthetic.main.activity_dashboard.*
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    MainActivityPresenter.View {
 
+    @Inject
+    lateinit var navEvents: PublishProcessor<NavEvent>
+
+    @Inject
+    lateinit var service : ApiService
+
+    private lateinit var navController: NavController
+
+    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+
+    var currentFragment = R.id.statsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dash)
+        setContentView(R.layout.activity_dashboard)
 
-         modelIndexList = ArrayList<ModelIndex>()//inicjalizacja danych mapy
-        MyVariables.sensorIDList = ArrayList<String>()//inicjalizacja danych mapy
-        var syPreference = MyPreference(applicationContext)
-        val service = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-        setPermission()
-
-        if (!isOnline(applicationContext)) {
-            Snackbar.make(
-                getWindow().getDecorView(), "Brak połączenia",
-                Snackbar.LENGTH_LONG
-            ).setAction("Action", null).show()
-        }
-
-        if (syPreference.getFIRST_LOGED()) {
-
-            val builder = AlertDialog.Builder(this@MainActivity)
-            syPreference.setFIRST_LOGED(false)
-            // Set the alert dialog title
-            builder.setTitle("Smoguś")
-            builder.setIcon(resources.getDrawable(R.drawable.draw, null))
-            // Display a message on alert dialog
-            builder.setMessage("Witaj w aplikacji 'Smoguś'  przejdź do mapy i wybierz swoją stację \uD83D\uDE00")
-
-            // Set a positive button and its click listener on alert dialog
-            builder.setPositiveButton("Mapa") { dialog, which ->
-                supportFragmentManager.beginTransaction().replace(
-                    R.id.fragment,
-                    MapFragment(), "SOMETAG"
-                ).commit()
-                dialog.dismiss()
-            }
-
-            // Display a negative button on alert dialog
-            builder.setNegativeButton("Później") { dialog, which ->
-                dialog.cancel()
-            }
+        //Set NavController with RxJava Subscriber
+        initNavigationController()
+        //Check permission about internet connection and  Location
+        systemPrivilegesCheck()
+        //Show Dialog if it is first time
+        firstTimeAction()
+        //Download Data from Api
+        fetchDataFromServer()
+        //Set event and init view
+        initView()
 
 
-            // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = builder.create()
+    }
 
-            // Display the alert dialog on app interface
-            dialog.show()
-        }
+    override fun initView() {
 
-        service.findAllRX().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { findall ->
-                stationList = findall
-                sizedApplication = stationList.size
-                for (findAllModel in stationList) {
-                    service.getIndexRX(findAllModel.id.toString()).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ model ->
-                            modelIndexList.add(model)
-                            println("moveIN ${modelIndexList.size}")
-                        }, {
-
-                        })
-                }
-            }
-
-
-        getSupportFragmentManager().beginTransaction().replace(
-            R.id.fragment,
-            StatsFragment(), "SOMETAG"
-        ).commit()
-
-        nav_view.setNavigationItemSelectedListener(this);
-
-        drawer.setScrimColor(resources.getColor(android.R.color.transparent)) //Niewidzialne tło przesuwania
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            drawer.setScrimColor(resources.getColor(android.R.color.transparent, null))
+        } //Invisible background
 
         val toggle: ActionBarDrawerToggle =
             object : ActionBarDrawerToggle(
@@ -145,125 +110,202 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         sync.setOnClickListener {
             sync.playAnimation()
+            sync.isClickable = false
         }
 
         sync.addAnimatorListener(object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(p0: Animator?) {
-
-            }
-
-            override fun onAnimationEnd(p0: Animator?) {
-
-            }
-
-            override fun onAnimationCancel(p0: Animator?) {
-
-            }
-
+            override fun onAnimationRepeat(p0: Animator?) {}
+            override fun onAnimationEnd(p0: Animator?) {}
+            override fun onAnimationCancel(p0: Animator?) {}
             override fun onAnimationStart(p0: Animator?) {
-                //   spinner.setSelection(0)
-                val service =
-                    RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
+
                 stationList = emptyList()
                 sizedApplication = 0
                 modelIndexList.clear()
 
-                service.findAllRX().subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ findall ->
+                compositeDisposable.add(
+                    service
+                        .findAllRX()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { stationData ->
+                            stationList = stationData
+                            sizedApplication = stationList.size
+                            var k: Int = 0;
+                            for (stationData in stationList) {
+                                compositeDisposable.add(
+                                    service.getIndexRX(stationData.id.toString())
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe({ model ->
+                                            modelIndexList.add(model)
+                                            k++
+                                            if (k == stationList.size) {
+                                                navController =
+                                                    findNavController(R.id.main_fragment_container)
+                                                navController.popBackStack()
+                                                navController.navigate(currentFragment)
+                                                sync.pauseAnimation()
+                                                sync.isClickable = true
+                                                sync.frame = 0
+                                            }
+                                        }, {
+                                            it.printStackTrace()
+                                            sync.isClickable = true
+                                        })
+                                )
 
-                        stationList = findall
-                        sizedApplication = stationList.size
-                        var k: Int = 0;
-                        for (findAllModel in stationList) {
-                            service.getIndexRX(findAllModel.id.toString())
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ model ->
-                                    modelIndexList.add(model)
-                                    k++
-                                    if (k == stationList.size) {
-
-                                        var frg: Fragment? = null
-                                        frg = supportFragmentManager.findFragmentByTag("SOMETAG")
-                                        val ft: FragmentTransaction =
-                                            supportFragmentManager.beginTransaction()
-                                        frg?.let { ft.detach(it) }
-                                        frg?.let { ft.attach(it) }
-                                        ft.commit()
-                                        sync.pauseAnimation()
-
-                                    }
-                                    println("moveIN $k ${modelIndexList.size}")
-                                }, {
-
-                                })
-
-                        }
-                    } )
+                            }
+                        })
             }
 
         })
     }
 
-    private fun setPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this@MainActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                200
-            )
+    override fun initNavigationController() {
+        navController = findNavController(R.id.main_fragment_container)
+
+        navEvents.subscribe {
+            when (it.destination) {
+                NavEvent.Destination.StatsFragment -> {
+                    if (navController.currentDestination?.id != R.id.statsFragment) {
+                        navController.popBackStack()
+                        navController.navigate(R.id.statsFragment)
+                        currentFragment = R.id.statsFragment
+                    }
+                }
+                NavEvent.Destination.ChartFragment -> {
+                    if (navController.currentDestination?.id != R.id.chartFragment) {
+                        navController.popBackStack()
+                        navController.navigate(R.id.chartFragment)
+                        currentFragment = R.id.chartFragment
+                    }
+                }
+                NavEvent.Destination.MapFragment -> {
+
+                    if (navController.currentDestination?.id != R.id.mapFragment) {
+                        navController.popBackStack()
+                        navController.navigate(R.id.mapFragment)
+                        currentFragment = R.id.mapFragment
+                    }
+                }
+                NavEvent.Destination.InfoFragment -> {
+                    if (navController.currentDestination?.id != R.id.infoFragment) {
+                        navController.popBackStack()
+                        navController.navigate(R.id.infoFragment)
+                        currentFragment = R.id.infoFragment
+                    }
+                }
+                NavEvent.Destination.AboutFragment -> {
+                    if (navController.currentDestination?.id != R.id.aboutFragment) {
+                        navController.popBackStack()
+                        navController.navigate(R.id.aboutFragment)
+                        currentFragment = R.id.aboutFragment
+                    }
+                }
+            }
         }
+        nav_view.setNavigationItemSelectedListener(this)
+    }
+
+    override fun firstTimeAction() {
+        var syPreference = MyPreference(applicationContext)
+        if (syPreference.getFIRST_LOGED()) {
+            val builder = AlertDialog.Builder(this@MainActivity)
+            syPreference.setFIRST_LOGED(false)
+            builder.setTitle("Smoguś")
+            builder.setIcon(resources.getDrawable(R.drawable.draw, null))
+            builder.setMessage("Witaj w aplikacji 'Smoguś'  przejdź do mapy i wybierz swoją stację \uD83D\uDE00")
+            builder.setNegativeButton("Później") { dialog, _ ->
+                dialog.cancel()
+            }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+    }
+
+    override fun systemPrivilegesCheck() {
+        var permission: SystemUtils = SystemUtils(activity = this)
+        permission.setPermission()
+        if (!permission.isOnline()) {
+            Snackbar.make(
+                window.decorView, "Brak połączenia",
+                Snackbar.LENGTH_LONG
+            ).setAction("Action", null).show()
+        }
+    }
+
+    override fun fetchDataFromServer() {
+        modelIndexList = ArrayList<ModelIndex>()
+        sensorIDList = ArrayList<String>()
+
+        compositeDisposable.add(service.findAllRX().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { dataFromService ->
+                stationList = dataFromService
+                sizedApplication = stationList.size
+                for (stationData in stationList) {
+                    compositeDisposable.add(
+                        service.getIndexRX(stationData.id.toString())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({ model ->
+                                modelIndexList.add(model)
+                            }, {
+                                it.printStackTrace()
+                            })
+                    )
+                }
+            })
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         selectItemDrawer(item)
-
         return true
     }
 
     private fun selectItemDrawer(item: MenuItem) {
-        // Handle navigation view item clicks here.
         val id = item.itemId
         if (id == R.id.main) {
-            getSupportFragmentManager().beginTransaction().replace(
-                R.id.fragment,
-                StatsFragment(), "SOMETAG"
-            ).commit()
+            navEvents.onNext(
+                NavEvent(
+                    NavEvent.Destination.StatsFragment
+                )
+            )
+
         } else if (id == R.id.maps) {
-            supportFragmentManager.beginTransaction().replace(
-                R.id.fragment,
-                MapFragment(), "SOMETAG"
-            ).commit()
+            navEvents.onNext(
+                NavEvent(
+                    NavEvent.Destination.MapFragment
+                )
+            )
+
         } else if (id == R.id.info) {
-            supportFragmentManager.beginTransaction().replace(
-                R.id.fragment,
-                InfoFragment(), "SOMETAG"
-            ).commit()
+            navEvents.onNext(
+                NavEvent(
+                    NavEvent.Destination.InfoFragment
+                )
+            )
         } else if (id == R.id.stats) {
-            supportFragmentManager.beginTransaction().replace(
-                R.id.fragment,
-                ChartFragment(), "SOMETAG"
-            ).commit()
+            navEvents.onNext(
+                NavEvent(
+                    NavEvent.Destination.ChartFragment
+                )
+            )
         } else if (id == R.id.about) {
-            supportFragmentManager.beginTransaction().replace(
-                R.id.fragment,
-                AboutFragment(), "SOMETAG"
-            ).commit()
+            navEvents.onNext(
+                NavEvent(
+                    NavEvent.Destination.AboutFragment
+                )
+            )
         }
 
         drawer.closeDrawer(GravityCompat.START)
     }
 
-    fun isOnline(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        return networkInfo != null && networkInfo.isConnected
+    override fun onDestroy() {
+
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

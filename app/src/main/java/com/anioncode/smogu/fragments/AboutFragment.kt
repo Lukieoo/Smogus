@@ -13,18 +13,13 @@ import com.anioncode.smogu.R
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.fragment_about.*
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
-class AboutFragment : Fragment() {
+class AboutFragment @Inject constructor() : Fragment(R.layout.fragment_about) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_about, container, false)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

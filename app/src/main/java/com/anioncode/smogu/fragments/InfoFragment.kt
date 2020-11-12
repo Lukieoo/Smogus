@@ -8,16 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.anioncode.smogu.R
+import javax.inject.Inject
 
-class InfoFragment : Fragment() {
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        var view:View= inflater.inflate(R.layout.fragment_info, container, false)
-        return view
-    }
-
+class InfoFragment @Inject constructor(): Fragment(R.layout.fragment_info) {
 
 }

@@ -17,10 +17,10 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-
             android:elevation="5dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
             <RelativeLayout
                 android:id="@+id/anim"
                 android:layout_width="match_parent"
@@ -28,6 +28,8 @@
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/sync"
+                    app:lottie_loop="true"
+                    app:lottie_speed="2"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentEnd="true"
@@ -36,13 +38,25 @@
                     app:lottie_rawRes="@raw/sync" />
 
             </RelativeLayout>
-        </androidx.appcompat.widget.Toolbar>
-        <FrameLayout
-            android:id="@+id/fragment"
 
+        </androidx.appcompat.widget.Toolbar>
+        <fragment
+            android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar" />
+            android:id="@+id/main_fragment_container"
+            android:name="com.anioncode.smogu.fragments.MainNavHostFragment"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/main_nav"
+            >
+        </fragment>
+<!--        <FrameLayout-->
+<!--            android:id="@+id/fragment"-->
+
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_below="@id/toolbar" />-->
+
     </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView

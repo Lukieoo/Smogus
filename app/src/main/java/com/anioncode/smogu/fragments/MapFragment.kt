@@ -1,5 +1,6 @@
 package com.anioncode.smogu.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -38,9 +39,10 @@ import kotlinx.android.synthetic.main.fragment_map.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 
-class MapFragment : Fragment() {
+class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
 
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
@@ -49,12 +51,9 @@ class MapFragment : Fragment() {
     var iterator = 0;
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         // Inflate the layout for this fragment
-        var view: View = inflater.inflate(R.layout.fragment_map, container, false)
 
         view.pomiar.setText(SENSORNAME)
         view.image.setOnClickListener {
@@ -117,19 +116,20 @@ class MapFragment : Fragment() {
             }
         )
 
-        return view
+
     }
 
     private fun refresh() {
-        var frg: Fragment?
-        frg = fragmentManager!!.findFragmentByTag("SOMETAG")
-        val ft: FragmentTransaction =
-            fragmentManager!!.beginTransaction()
-        frg?.let { ft.detach(it) }
-        frg?.let { ft.attach(it) }
-        ft.commit()
+//        var frg: Fragment?
+//        frg = fragmentManager!!.findFragmentByTag("SOMETAG")
+//        val ft: FragmentTransaction =
+//            fragmentManager!!.beginTransaction()
+//        frg?.let { ft.detach(it) }
+//        frg?.let { ft.attach(it) }
+//        ft.commit()
     }
 
+    @SuppressLint("MissingPermission")
     private fun setMapFragment(Poland: LatLngBounds) {
         sensorIDListNotStatic = ArrayList<String>()
         mapFragment = childFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
@@ -169,8 +169,8 @@ class MapFragment : Fragment() {
                                 sensorIDList.clear()
                                 sensorIDList = sensorIDListNotStatic
 
-                                getFragmentManager()?.beginTransaction()
-                                    ?.replace(R.id.fragment, StatsFragment(), "SOMETAG")?.commit();
+//                                getFragmentManager()?.beginTransaction()
+//                                    ?.replace(R.id.fragment, StatsFragment(), "SOMETAG")?.commit();
 
                                 Toast.makeText(activity, "Wybrano stację", Toast.LENGTH_LONG).show()
 

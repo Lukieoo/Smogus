@@ -25,19 +25,17 @@ import kotlinx.android.synthetic.main.fragment_dash.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
-class StatsFragment : Fragment() {
+class StatsFragment @Inject constructor() : Fragment(R.layout.fragment_dash) {
     lateinit var modelIndex: ModelIndex
     lateinit var myPreference: MyPreference
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dash, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -60,8 +58,8 @@ class StatsFragment : Fragment() {
 
         getDataStationSensor()
         maps.setOnClickListener(View.OnClickListener {
-            getFragmentManager()?.beginTransaction()
-                ?.replace(R.id.fragment, MapFragment(), "SOMETAG")?.commit();
+//            getFragmentManager()?.beginTransaction()
+//                ?.replace(R.id.fragment, MapFragment(), "SOMETAG")?.commit();
 
         })
 

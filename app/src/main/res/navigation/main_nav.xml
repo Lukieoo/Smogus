@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/statsFragment">
+
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.anioncode.smogu.fragments.StatsFragment"
+        android:label="fragment_dash"
+        tools:layout="@layout/fragment_dash" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.anioncode.smogu.fragments.MapFragment"
+        android:label="MapFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.anioncode.smogu.fragments.AboutFragment"
+        android:label="AboutFragment" />
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.anioncode.smogu.fragments.InfoFragment"
+        android:label="InfoFragment" />
+    <fragment
+        android:id="@+id/chartFragment"
+        android:name="com.anioncode.smogu.fragments.ChartFragment"
+        android:label="ChartFragment" />
+</navigation>
