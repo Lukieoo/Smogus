@@ -1,4 +1,12 @@
- 
+#Aktualnie przebudowywana w celu uzyskania : 
+- Architektury MVP,
+- Clean architecture,
+- Testowalnego kodu,
+- Android JetPack
+- Usunięcia błedów z wersji 1.0.2
+- Obsługa zdarzeń i błędów dla RxJavy
+- Wstrzykiwanie zależności dzięki Hilt
+#Wkrótce 
  
 
 # Smoguś
