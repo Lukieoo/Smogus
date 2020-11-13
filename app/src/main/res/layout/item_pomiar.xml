@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_margin="4dp"
-            android:fontFamily="@font/productsansmedium"
+            android:fontFamily="@font/sans_medium"
             android:text=""
             android:textSize="16sp" />
 
@@ -29,7 +29,7 @@
             android:layout_below="@id/namesensor"
             android:layout_centerHorizontal="true"
             android:layout_margin="4dp"
-            android:fontFamily="@font/productsansmedium"
+            android:fontFamily="@font/sans_medium"
             android:text=""
             android:textSize="19sp" />
         <TextView
@@ -39,7 +39,7 @@
             android:layout_below="@id/namesensorPomiar"
             android:layout_centerHorizontal="true"
             android:layout_margin="4dp"
-            android:fontFamily="@font/productsanslight"
+            android:fontFamily="@font/sans_light"
             android:text="µg/m^3"
             android:textSize="16sp" />
     </RelativeLayout>

@@ -3,29 +3,23 @@ package com.anioncode.smogu.activity
 import android.animation.Animator
 import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
-
 import androidx.navigation.findNavController
 import com.anioncode.retrofit2.ApiService
-import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.CONST.MyPreference
-import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sizedApplication
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
-import com.anioncode.smogu.model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
 import com.anioncode.smogu.events.NavEvent
+import com.anioncode.smogu.model.ModelIndex.ModelIndex
 import com.anioncode.smogu.presenters.MainActivityPresenter
 import com.anioncode.smogu.utils.SystemUtils
 import com.google.android.material.navigation.NavigationView
@@ -47,9 +41,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var navEvents: PublishProcessor<NavEvent>
 
     @Inject
-    lateinit var service : ApiService
+    lateinit var service: ApiService
 
     private lateinit var navController: NavController
+    private lateinit var mainActivityPresenter: MainActivityPresenter
 
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -59,6 +54,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
+
+        mainActivityPresenter = MainActivityPresenter(this)
 
         //Set NavController with RxJava Subscriber
         initNavigationController()
@@ -76,6 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun initView() {
 
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             drawer.setScrimColor(resources.getColor(android.R.color.transparent, null))
         } //Invisible background
@@ -88,26 +86,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
             ) {
+                private val scaleFactor = 8f
                 override fun onDrawerSlide(
                     drawerView: View,
                     slideOffset: Float
                 ) {
                     super.onDrawerSlide(drawerView, slideOffset)
-
-                    if (drawer.isDrawerVisible(Gravity.RIGHT)) {
-                        val slideX = -1 * (drawerView.width * slideOffset)
-                        moveRelative.translationX = slideX
-                    } else {
-                        val slideX = drawerView.width * slideOffset
-                        moveRelative.translationX = slideX
-                    }
+                    val slideX = drawerView.width * slideOffset
+                    moveRelative.radius = ((slideOffset * 500) / scaleFactor + 1);
+                    moveRelative.translationX = slideX;
+                    moveRelative.scaleX = 1 - (slideOffset / scaleFactor);
+                    moveRelative.scaleY = 1 - (slideOffset / scaleFactor);
                 }
             }
-
+        drawer.drawerElevation = 0f;
         drawer.addDrawerListener(toggle)
         toggle.syncState()
-
-
         sync.setOnClickListener {
             sync.playAnimation()
             sync.isClickable = false
@@ -123,12 +117,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 sizedApplication = 0
                 modelIndexList.clear()
 
+                showProgressBar()
+                mainActivityPresenter.setProgress(0, 0)
+
                 compositeDisposable.add(
                     service
                         .findAllRX()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { stationData ->
+                        .subscribe({ stationData ->
                             stationList = stationData
                             sizedApplication = stationList.size
                             var k: Int = 0;
@@ -140,7 +137,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         .subscribe({ model ->
                                             modelIndexList.add(model)
                                             k++
+                                            mainActivityPresenter.setProgress(k, stationList.size)
+
                                             if (k == stationList.size) {
+
+                                                hideProgressBar()
                                                 navController =
                                                     findNavController(R.id.main_fragment_container)
                                                 navController.popBackStack()
@@ -152,11 +153,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         }, {
                                             it.printStackTrace()
                                             sync.isClickable = true
+                                            hideProgressBar()
                                         })
                                 )
 
                             }
+                        }, {
+                            sync.pauseAnimation()
+                            sync.isClickable = true
+                            sync.frame = 0
+                            it.printStackTrace()
+                            hideProgressBar()
                         })
+                )
             }
 
         })
@@ -213,10 +222,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (syPreference.getFIRST_LOGED()) {
             val builder = AlertDialog.Builder(this@MainActivity)
             syPreference.setFIRST_LOGED(false)
-            builder.setTitle("Smoguś")
+            builder.setTitle(R.string.app_name)
             builder.setIcon(resources.getDrawable(R.drawable.draw, null))
-            builder.setMessage("Witaj w aplikacji 'Smoguś'  przejdź do mapy i wybierz swoją stację \uD83D\uDE00")
-            builder.setNegativeButton("Później") { dialog, _ ->
+            builder.setMessage(R.string.welcome_info)
+            builder.setNegativeButton(R.string.later) { dialog, _ ->
                 dialog.cancel()
             }
             val dialog: AlertDialog = builder.create()
@@ -227,11 +236,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun systemPrivilegesCheck() {
         var permission: SystemUtils = SystemUtils(activity = this)
         permission.setPermission()
+        checkInternetConnection(permission)
+    }
+
+    private fun checkInternetConnection(permission: SystemUtils) {
         if (!permission.isOnline()) {
             Snackbar.make(
-                window.decorView, "Brak połączenia",
+                window.decorView, R.string.connection,
                 Snackbar.LENGTH_LONG
-            ).setAction("Action", null).show()
+            ).setAction(R.string.action, null).show()
         }
     }
 
@@ -239,24 +252,53 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         modelIndexList = ArrayList<ModelIndex>()
         sensorIDList = ArrayList<String>()
 
-        compositeDisposable.add(service.findAllRX().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { dataFromService ->
-                stationList = dataFromService
-                sizedApplication = stationList.size
-                for (stationData in stationList) {
-                    compositeDisposable.add(
-                        service.getIndexRX(stationData.id.toString())
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({ model ->
-                                modelIndexList.add(model)
-                            }, {
-                                it.printStackTrace()
-                            })
-                    )
-                }
-            })
+        showProgressBar()
+        mainActivityPresenter.setProgress(0, 0)
+
+        compositeDisposable.add(
+            service.findAllRX().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ dataFromService ->
+                    stationList = dataFromService
+                    var tmpCounter = 0
+                    sizedApplication = stationList.size
+                    for (stationData in stationList) {
+
+                        compositeDisposable.add(
+                            service.getIndexRX(stationData.id.toString())
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ model ->
+                                    tmpCounter++
+                                    mainActivityPresenter.setProgress(tmpCounter, stationList.size)
+                                    if (tmpCounter == stationList.size) {
+                                        hideProgressBar()
+                                    }
+                                    modelIndexList.add(model)
+                                }, {
+                                    hideProgressBar()
+                                })
+                        )
+                    }
+                }, {
+                    hideProgressBar()
+                })
+
+        )
+    }
+
+    override fun showProgressBar() {
+        loader_progress.visibility = View.VISIBLE
+        progress_bar.visibility = View.VISIBLE
+    }
+
+    override fun hideProgressBar() {
+        loader_progress.visibility = View.GONE
+        progress_bar.visibility = View.GONE
+    }
+
+    override fun setProgressBarProgress(result: Int) {
+        progress_bar.setProgress(result, true)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -279,6 +321,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     NavEvent.Destination.MapFragment
                 )
             )
+
 
         } else if (id == R.id.info) {
             navEvents.onNext(

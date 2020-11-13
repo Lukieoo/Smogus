@@ -11,13 +11,25 @@
 
     <style name="NavigationDrawerStyle">
 
-        <item name="android:listPreferredItemHeightSmall">14sp
-        </item> <!-- item size in menu-->
+        <item name="android:textSize">20sp</item><!-- text size in menu-->
 
-        <item name="listPreferredItemHeightSmall">5sp
-        </item> <!-- item size in menu-->
-        <item name="android:dividerPadding">5dp</item>
-        <item name="fontFamily">@font/productsanslight</item>
+        <!-- item size in menu-->
+        <item name="android:listPreferredItemHeightSmall">30dp</item>
+        <item name="listPreferredItemHeightSmall">30dp</item>
+
+        <!-- item padding left in menu-->
+        <item name="android:listPreferredItemPaddingLeft">8dp</item>
+        <item name="listPreferredItemPaddingLeft">8dp</item>
+
+        <!-- item padding right in menu-->
+        <item name="android:listPreferredItemPaddingRight">8dp</item>
+        <item name="listPreferredItemPaddingRight">8dp</item>
+
+<!--        <item name="android:dividerPadding">32dp</item>-->
+        <item name="android:listDivider">@android:color/transparent</item>
+<!--        <item name="android:selectable">true</item>-->
+<!--        <item name="android:checkable">true</item>-->
+        <item name="fontFamily">@font/sans_light</item>
     </style>
 
 

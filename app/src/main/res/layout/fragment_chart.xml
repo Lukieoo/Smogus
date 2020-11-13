@@ -9,7 +9,7 @@
         android:id="@+id/stationPart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/productsansmedium"
+        android:fontFamily="@font/sans_medium"
         android:paddingBottom="8dp"
 
         android:text="Moja stacja"
@@ -50,7 +50,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="Nazwa Stacji :"
                         android:textStyle="bold" />
@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="" />
 
@@ -76,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="Ulica :"
                         android:textStyle="bold" />
@@ -87,7 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="" />
                 </LinearLayout>
@@ -101,7 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="Województwo :"
                         android:textStyle="bold" />
@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="" />
                 </LinearLayout>
@@ -130,7 +130,7 @@
 
 <!--        android:layout_marginTop="15dp"-->
 <!--        android:layout_marginBottom="5dp"-->
-<!--        android:fontFamily="@font/productsansmedium"-->
+<!--        android:fontFamily="@font/sans_medium"-->
 <!--        android:text="Ocena jakości PM10:"-->
 <!--        android:textSize="16sp" />-->
 

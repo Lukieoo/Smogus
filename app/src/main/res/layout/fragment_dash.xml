@@ -22,7 +22,7 @@
             android:id="@+id/stationPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/productsansmedium"
+            android:fontFamily="@font/sans_medium"
             android:paddingBottom="8dp"
 
             android:text="Moja stacja"
@@ -62,7 +62,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="Nazwa Stacji :"
                         android:textStyle="bold" />
@@ -73,7 +73,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="" />
 
@@ -82,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="Ulica :"
                         android:textStyle="bold" />
@@ -92,7 +92,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="" />
 
@@ -101,7 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="Województwo :"
                         android:textStyle="bold" />
@@ -111,7 +111,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/productsanslight"
+                        android:fontFamily="@font/sans_light"
                         android:maxLines="1"
                         android:text="" />
                 </LinearLayout>
@@ -135,7 +135,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/card"
             android:layout_marginTop="5dp"
-            android:fontFamily="@font/productsansmedium"
+            android:fontFamily="@font/sans_medium"
             android:text="Dostępne pomiary :"
             android:textSize="16sp" />
 
@@ -155,7 +155,7 @@
             android:layout_below="@id/RecyclerView"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
-            android:fontFamily="@font/productsansmedium"
+            android:fontFamily="@font/sans_medium"
             android:text="Ocena jakości ogólna:"
             android:textSize="16sp" />
 
@@ -176,7 +176,7 @@
                 android:layout_below="@id/partJakosc"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="10dp"
-                android:fontFamily="@font/productsanslight"
+                android:fontFamily="@font/sans_light"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/colorGreen"
@@ -190,7 +190,7 @@
             android:layout_below="@id/card2"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
-            android:fontFamily="@font/productsansmedium"
+            android:fontFamily="@font/sans_medium"
             android:text="Mapa smogu w polsce :"
             android:textSize="16sp" />
 
@@ -225,7 +225,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:fontFamily="@font/productsanslight"
+                    android:fontFamily="@font/sans_light"
                     android:text="Przejdź do mapy"
                     android:textSize="14sp" />
             </RelativeLayout>
@@ -267,7 +267,7 @@
 <!--                android:layout_height="wrap_content"-->
 <!--                android:layout_centerHorizontal="true"-->
 <!--                android:layout_margin="4dp"-->
-<!--                android:fontFamily="@font/productsansmedium"-->
+<!--                android:fontFamily="@font/sans_medium"-->
 <!--                android:text="PM2.5"-->
 <!--                android:textSize="16sp" />-->
 
@@ -278,7 +278,7 @@
 <!--                android:layout_below="@id/namesensorpm25"-->
 <!--                android:layout_centerHorizontal="true"-->
 <!--                android:layout_margin="4dp"-->
-<!--                android:fontFamily="@font/productsansmedium"-->
+<!--                android:fontFamily="@font/sans_medium"-->
 <!--                android:text="7,2"-->
 <!--                android:textSize="19sp" />-->
 
@@ -289,7 +289,7 @@
 <!--                android:layout_below="@id/namesensorPomiarpm25"-->
 <!--                android:layout_centerHorizontal="true"-->
 <!--                android:layout_margin="4dp"-->
-<!--                android:fontFamily="@font/productsanslight"-->
+<!--                android:fontFamily="@font/sans_light"-->
 <!--                android:text="µg/m^3"-->
 <!--                android:textSize="16sp" />-->
 <!--        </RelativeLayout>-->
@@ -314,7 +314,7 @@
 <!--                android:layout_height="wrap_content"-->
 <!--                android:layout_centerHorizontal="true"-->
 <!--                android:layout_margin="4dp"-->
-<!--                android:fontFamily="@font/productsansmedium"-->
+<!--                android:fontFamily="@font/sans_medium"-->
 <!--                android:text="PM10"-->
 <!--                android:textSize="16sp" />-->
 
@@ -325,7 +325,7 @@
 <!--                android:layout_below="@id/namesensorpm10"-->
 <!--                android:layout_centerHorizontal="true"-->
 <!--                android:layout_margin="4dp"-->
-<!--                android:fontFamily="@font/productsansmedium"-->
+<!--                android:fontFamily="@font/sans_medium"-->
 <!--                android:text="7,2"-->
 <!--                android:textSize="19sp" />-->
 
@@ -336,7 +336,7 @@
 <!--                android:layout_below="@id/namesensorPomiarpm10"-->
 <!--                android:layout_centerHorizontal="true"-->
 <!--                android:layout_margin="4dp"-->
-<!--                android:fontFamily="@font/productsanslight"-->
+<!--                android:fontFamily="@font/sans_light"-->
 <!--                android:text="µg/m^3"-->
 <!--                android:textSize="16sp" />-->
 <!--        </RelativeLayout>-->

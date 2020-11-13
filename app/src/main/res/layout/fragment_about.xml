@@ -25,7 +25,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/date"
                     android:layout_marginLeft="10dp"
-                    android:fontFamily="@font/productsansmedium"
+                    android:fontFamily="@font/sans_medium"
                     android:text="Wersja X.X"
                     android:textSize="17sp" />
 
@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_margin="5dp"
-                    android:fontFamily="@font/productsanslight"
+                    android:fontFamily="@font/sans_light"
                     android:text="07.04.2020" />
 
                 <ImageView
@@ -52,7 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/update"
-                    android:fontFamily="@font/productsanslight"
+                    android:fontFamily="@font/sans_light"
                     android:padding="8dp"
                     android:text="Przedstawione dane to rzetelne informacje o aktualnym poziomie zanieczyszczeń w Polsce. Dane pozyskane są z głownych stacji GIOŚ .\n\n Aktualna wersja umożliwia : \n- Ustawienie lokalizacji stacji\n- Mapa pomiarów \n- Dostępny widget Aplikacji" />
             </RelativeLayout>
@@ -79,7 +79,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/productsansmedium"
+                    android:fontFamily="@font/sans_medium"
                     android:gravity="center"
                     android:padding="4dp"
                     android:text="Kontakt"
@@ -89,7 +89,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/productsanslight"
+                    android:fontFamily="@font/sans_light"
 
                     android:padding="4dp"
                     android:text="W przypadku wystąpienia błędów , zapytań. Zapraszam do kontaktu na poniższy email lub po prostu kliknij w 'Zgłoś błąd'."
@@ -99,7 +99,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/productsansmedium"
+                    android:fontFamily="@font/sans_medium"
                     android:gravity="center"
                     android:padding="4dp"
                     android:text="pawkrzysciak@gmail.com"

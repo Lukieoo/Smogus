@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhitetrans"
+    android:background="@color/colorWhiteWithOpacity"
 
     android:padding="5dp">
 
@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="@font/productsanslight"
+                android:fontFamily="@font/sans_light"
                 android:maxLines="1"
                 android:text="" />
 
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="@font/productsanslight"
+                android:fontFamily="@font/sans_light"
                 android:maxLines="1"
                 android:textColor="@color/colorbdb"
                 android:textStyle="bold"

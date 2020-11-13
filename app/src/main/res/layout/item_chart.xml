@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="5dp"
-        android:fontFamily="@font/productsansmedium"
+        android:fontFamily="@font/sans_medium"
         android:text="Ocena jakości PM10:"
         android:textSize="16sp" />
 

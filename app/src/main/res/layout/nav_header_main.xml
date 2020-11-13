@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
+    android:layout_height="290dp"
     android:gravity="bottom"
+    android:paddingLeft="15dp"
     android:orientation="vertical"
-
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
     <ImageView
         android:layout_marginTop="?attr/actionBarSize"
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="center_vertical"
         android:src="@drawable/draw"
-         />
+        />
+    <TextView
+        android:textStyle="bold"
+        android:fontFamily="@font/sans_medium"
+        android:text="Smoguś"
+        android:textSize="40sp"
+        android:textColor="@color/colorWhite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/sans_light"
+        android:text="Stan jakości powietrza w Polsce."
+        android:textSize="15sp"
+        android:textColor="@color/colorWhiteWithOpacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <View
+        android:background="@color/colorWhite"
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"/>
+
 
 </LinearLayout>

@@ -10,10 +10,10 @@
     <color name="colorAccent">#62727b</color>
     <color name="colorWhite">#ffffff</color>
 
-    <color name="colorWhitetrans">#eeffffff</color>
+    <color name="colorWhiteWithOpacity">#eeffffff</color>
 
     <color name="colorGreen">#43a047</color>
-    <color name="colorNav">#36363A</color>
+    <color name="colorNav">#333341</color>
     <color name="colorNav2">#C7EDE6</color>
     <color name="colorBlack">#bb000000</color>
 

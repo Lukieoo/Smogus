@@ -124,7 +124,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="10dp"
                 android:id="@+id/pomiar"
-                android:fontFamily="@font/productsansmedium"
+                android:fontFamily="@font/sans_medium"
                 android:layout_toRightOf="@id/image2"
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
@@ -170,7 +170,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="ST"
                         android:textSize="16sp" />
                 </RelativeLayout>
@@ -194,7 +194,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="PM2.5"
                         android:textSize="16sp" />
                 </RelativeLayout>
@@ -218,7 +218,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="PM10"
                         android:textSize="16sp" />
                 </RelativeLayout>
@@ -242,7 +242,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="CO"
                         android:textSize="16sp" />
                 </RelativeLayout>
@@ -266,7 +266,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="NO2"
                         android:textSize="16sp" />
                 </RelativeLayout>
@@ -290,7 +290,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="SO2"
                         android:textSize="16sp" />
                 </RelativeLayout>
@@ -313,7 +313,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="C6H6"
                         android:textSize="16sp" />
                 </RelativeLayout>
@@ -336,7 +336,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="4dp"
-                        android:fontFamily="@font/productsansmedium"
+                        android:fontFamily="@font/sans_medium"
                         android:text="O3"
                         android:textSize="16sp" />
                 </RelativeLayout>

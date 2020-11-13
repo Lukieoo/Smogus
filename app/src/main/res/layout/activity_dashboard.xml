@@ -5,75 +5,103 @@
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorNav"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <RelativeLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/moveRelative"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:elevation="5dp"
+        app:cardElevation="5dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:elevation="5dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/anim"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="45dp"
+                android:elevation="5dp"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/sync"
-                    app:lottie_loop="true"
-                    app:lottie_speed="2"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="20dp"
-                    app:lottie_rawRes="@raw/sync" />
+                <RelativeLayout
+                    android:id="@+id/anim"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            </RelativeLayout>
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/sync"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/sync"
+                        app:lottie_speed="2" />
+                </RelativeLayout>
 
-        </androidx.appcompat.widget.Toolbar>
-        <fragment
-            android:layout_below="@id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/main_fragment_container"
-            android:name="com.anioncode.smogu.fragments.MainNavHostFragment"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/main_nav"
-            >
-        </fragment>
-<!--        <FrameLayout-->
-<!--            android:id="@+id/fragment"-->
+            </androidx.appcompat.widget.Toolbar>
 
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_below="@id/toolbar" />-->
+            <fragment
+                android:id="@+id/main_fragment_container"
+                android:name="com.anioncode.smogu.fragments.MainNavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/toolbar"
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/main_nav" />
 
-    </RelativeLayout>
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loader_progress"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_above="@id/progress_bar"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:visibility="gone"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:progressTint="@color/colorNav2"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.navigation.NavigationView
-
         android:id="@+id/nav_view"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/colorNav"
+        android:elevation="0dp"
         android:fitsSystemWindows="true"
+        android:theme="@style/NavigationDrawerStyle"
+        app:elevation="0dp"
         app:headerLayout="@layout/nav_header_main"
         app:itemIconTint="@color/colorWhite"
         app:itemTextColor="@color/colorWhite"
-        android:theme="@style/NavigationDrawerStyle"
-        app:menu="@menu/menu"
+        app:menu="@menu/menu">
 
-        />
+        <include
+            layout="@layout/nav_footer_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" />
+    </com.google.android.material.navigation.NavigationView>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>
