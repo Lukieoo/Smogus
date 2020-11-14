@@ -753,8 +753,8 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
                                                 adapter = SensorAdapter(
                                                     MyVariables.sensorbyIDList,
                                                     activity!!,
-                                                    clickListner = object :
-                                                        SensorAdapter.OnItemClickListner {
+                                                    onClick = object :
+                                                        SensorAdapter.OnItemClickListener {
                                                         override fun onItemClick(model: SensorbyID) {
 
                                                         }

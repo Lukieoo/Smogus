@@ -1,6 +1,7 @@
 package com.anioncode.smogu.adapter
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,19 +11,20 @@ import com.anioncode.smogu.R
 import kotlinx.android.synthetic.main.item_pomiar.view.*
 
 class SensorAdapter(
-    val items: ArrayList<SensorbyID>,
+    val data: ArrayList<SensorbyID>,
     val context: Context,
-    var clickListner: OnItemClickListner
+    private var onClick: OnItemClickListener
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     // Gets the number of animals in the list
     override fun getItemCount(): Int {
-        return items.size
+        return data.size
     }
 
-    interface OnItemClickListner{
-        fun onItemClick(model:SensorbyID)
+    interface OnItemClickListener {
+        fun onItemClick(model: SensorbyID)
     }
+
     // Inflates the item views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_pomiar, parent, false))
@@ -30,35 +32,56 @@ class SensorAdapter(
 
     // Binds each animal in the ArrayList to a view
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        var model=items.get(position)
+        var model = data.get(position)
         holder?.nameSensor?.text = model.key
-        var iter=0;
-
+        var iter = 0
         holder.itemView.setOnClickListener {
-            clickListner.onItemClick(model)
-
+            onClick.onItemClick(model)
+            for (singleItem in data) {
+                singleItem.isClicked = false
+            }
+            model.isClicked = true
+            notifyDataSetChanged()
         }
 
-      if (model.values!=null)  {
-          for (data in model.values){
-              println(data.value);
-              println(data.date);
+        if (model.isClicked) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                holder.bacgroundCardView.setCardBackgroundColor(context.getColor(R.color.colorBlue))
+                holder.nameSensor.setTextColor(context.getColor(R.color.colorWhite))
+                holder.nameSensorPomiar.setTextColor(context.getColor(R.color.colorWhite))
+                holder.kind.setTextColor(context.getColor(R.color.colorWhite))
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                holder.bacgroundCardView.setCardBackgroundColor(context.getColor(R.color.colorBlueNotSelected))
+                holder.nameSensor.setTextColor(context.getColor(android.R.color.tab_indicator_text))
+                holder.nameSensorPomiar.setTextColor(context.getColor(android.R.color.tab_indicator_text))
+                holder.kind.setTextColor(context.getColor(android.R.color.tab_indicator_text))
+            }
+        }
 
-              if(data.value!=null&&model.values.get(iter).value!=0.0){
+        if (model.values != null) {
+            for (data in model.values) {
+                println(data.value);
+                println(data.date);
 
-                  holder?.nameSensorPomiar?.text = model.values.get(iter).value.toInt().toString()
-                  break
-              }
-              iter++;
-          }
-      }
+                if (data.value != null && model.values.get(iter).value != 0.0) {
+
+                    holder?.nameSensorPomiar?.text = model.values[iter].value.toInt().toString()
+                    break
+                }
+                iter++;
+            }
+        }
 
     }
 }
 
-class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
+class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     // Holds the TextView that will add each animal to
     val nameSensor = view.namesensor
     val nameSensorPomiar = view.namesensorPomiar
-    
+    val bacgroundCardView = view.background_card
+    val kind = view.kind
+
 }

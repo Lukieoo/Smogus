@@ -222,11 +222,13 @@ class StatsFragment @Inject constructor() : Fragment(R.layout.fragment_dash) {
                                                         SensorAdapter(
                                                             sensorbyIDList,
                                                             activity!!,
-                                                            clickListner = object :
-                                                                SensorAdapter.OnItemClickListner {
+                                                            onClick = object :
+                                                                SensorAdapter.OnItemClickListener {
                                                                 override fun onItemClick(model: SensorbyID) {
                                                                     partJakosc.text =
-                                                                        "Ocena jakości ${model.key}:"
+                                                                        "Ocena jakości z ${model.key}:"
+                                                                    time.text =
+                                                                    "Stan z : ${model.values.get(0).date.substring(0,10)} "
                                                                     getDataStation(model.key)
 
                                                                 }
