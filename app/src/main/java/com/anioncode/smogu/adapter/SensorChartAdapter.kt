@@ -21,12 +21,23 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class SensorChartAdapter(val items: ArrayList<ChartPart>, val context: Context) :
+class SensorChartAdapter(val context: Context) :
     RecyclerView.Adapter<ViewChartHolder>() {
 
-    // Gets the number of animals in the list
+    private lateinit var items: ArrayList<ChartPart>
+
+    fun setData( items: ArrayList<ChartPart>){
+        this.items=items
+        notifyDataSetChanged()
+    }
+
+    // Gets the number of sensors in the list
     override fun getItemCount(): Int {
-        return items.size
+        return if (::items.isInitialized) {
+            items.size
+        } else {
+            0
+        }
     }
 
     // Inflates the item views
@@ -40,7 +51,7 @@ class SensorChartAdapter(val items: ArrayList<ChartPart>, val context: Context) 
         )
     }
 
-    // Binds each animal in the ArrayList to a view
+    // Binds each sensor in the ArrayList to a view
     override fun onBindViewHolder(holder: ViewChartHolder, position: Int) {
         var model = items.get(position)
 
@@ -83,16 +94,16 @@ class SensorChartAdapter(val items: ArrayList<ChartPart>, val context: Context) 
         holder.codeSensor.text = "Ocena jakości ${model.codeName}"
         holder.chartSensor.apply {
             setNoDataTextTypeface(Typeface.SANS_SERIF)
-            setNoDataText("");
+            setNoDataText("")
             setTouchEnabled(true)
             setPinchZoom(false)
             setNoDataTextColor(color1)
-            getLegend().setEnabled(false);
-            getAxisRight().setDrawLabels(false);
-            getAxisLeft().setDrawGridLines(false);
-            getXAxis().setDrawGridLines(false);
+            legend.isEnabled = false;
+            axisRight.setDrawLabels(false);
+            axisLeft.setDrawGridLines(false);
+            xAxis.setDrawGridLines(false);
             description.text = ""
-            setExtraBottomOffset(35f);
+            extraBottomOffset = 35f;
         }
 
 
@@ -106,7 +117,7 @@ class SensorChartAdapter(val items: ArrayList<ChartPart>, val context: Context) 
             setCircleColor(R.color.colorGreen)
             fillColor = color1
             setDrawValues(false)
-            setAxisDependency(YAxis.AxisDependency.RIGHT)
+            axisDependency = YAxis.AxisDependency.RIGHT
             mode = LineDataSet.Mode.CUBIC_BEZIER
         }
 
@@ -118,7 +129,7 @@ class SensorChartAdapter(val items: ArrayList<ChartPart>, val context: Context) 
             Easing.getEasingFunctionFromOption(Easing.EasingOption.EaseInExpo)
         )
         holder.chartSensor.invalidate()
-        val xAxis: XAxis = holder.chartSensor.getXAxis()
+        val xAxis: XAxis = holder.chartSensor.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
 
         val xAxisFormatter = object : IndexAxisValueFormatter() {

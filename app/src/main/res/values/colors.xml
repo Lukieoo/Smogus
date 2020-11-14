@@ -11,13 +11,16 @@
     <color name="colorWhite">#ffffff</color>
     <color name="colorBlue">#1C7BFD</color>
     <color name="colorBlueNotSelected">#eeffffff</color>
+    <color name="colorBlueLight">#aa1C7BFD</color>
 
     <color name="colorWhiteWithOpacity">#eeffffff</color>
+    <color name="colorNavOpacity">#ee333341</color>
 
     <color name="colorGreen">#43a047</color>
     <color name="colorNav">#333341</color>
     <color name="colorNav2">#C7EDE6</color>
     <color name="colorNav3">#EEEEEEEE</color>
+    <color name="colorNav4">#88d4c6</color>
 
     <color name="colorBlack">#bb000000</color>
 

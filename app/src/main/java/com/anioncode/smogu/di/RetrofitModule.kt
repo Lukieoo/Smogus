@@ -25,7 +25,7 @@ object RetrofitModule {
             .addConverterFactory(GsonConverterFactory.create())
     }
 
-    @Singleton
+
     @Provides
     fun provideService(retrofit: Retrofit.Builder): ApiService {
         return retrofit

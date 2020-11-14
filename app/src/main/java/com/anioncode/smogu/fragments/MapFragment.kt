@@ -7,130 +7,160 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anioncode.retrofit2.ApiService
-import com.anioncode.retrofit2.RetrofitClientInstance
 import com.anioncode.smogu.adapter.SensorAdapter
 import com.anioncode.smogu.CONST.MyPreference
-import com.anioncode.smogu.CONST.MyVariables
 import com.anioncode.smogu.CONST.MyVariables.Companion.SENSORNAME
 import com.anioncode.smogu.CONST.MyVariables.Companion.modelIndexList
 import com.anioncode.smogu.CONST.MyVariables.Companion.sensorIDList
+import com.anioncode.smogu.CONST.MyVariables.Companion.sensorbyIDList
+import com.anioncode.smogu.CONST.MyVariables.Companion.sensorsNameList
 import com.anioncode.smogu.CONST.MyVariables.Companion.stationList
-import com.anioncode.smogu.model.ModelSensor.SensorsName
 import com.anioncode.smogu.model.ModelSensorId.SensorbyID
 import com.anioncode.smogu.R
+import com.anioncode.smogu.events.NavEvent
+import com.anioncode.smogu.presenters.MapFragmentPresenter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.processors.PublishProcessor
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.custom_marker.view.*
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_map.RecyclerView
-import kotlinx.android.synthetic.main.fragment_map.view.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
+@AndroidEntryPoint
+class MapFragment @Inject constructor() : Fragment(R.layout.fragment_map),
+    MapFragmentPresenter.View {
 
-class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
+    @Inject
+    lateinit var navEvents: PublishProcessor<NavEvent>
 
+    @Inject
+    lateinit var loadingEvents: PublishProcessor<Boolean>
+
+    @Inject
+    lateinit var service: ApiService
+
+    @Inject
+    lateinit var adapterSensor: SensorAdapter
+
+    var compositeDisposable: CompositeDisposable = CompositeDisposable()
     lateinit var mapFragment: SupportMapFragment
     lateinit var googleMap: GoogleMap
-
     lateinit var sensorIDListNotStatic: ArrayList<String>
-    var iterator = 0;
+    private val polandCoordinates = LatLngBounds(LatLng(47.0, 14.0), LatLng(56.5, 24.3))
+    var iterator = 0
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        //Initialize View events , set Marker on Map
+        initView()
+        //Initialize View events
+        setMapFragment()
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // Inflate the layout for this fragment
+    }
 
-        view.pomiar.setText(SENSORNAME)
-        view.image.setOnClickListener {
-            if (view.show.visibility == View.VISIBLE) {
-                view.show.visibility = View.INVISIBLE
+    override fun initView() {
+
+        RecyclerView.apply {
+            layoutManager = LinearLayoutManager(
+                activity,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = adapterSensor
+        }
+        pomiar.text = SENSORNAME
+        image.setOnClickListener {
+            if (show.visibility == View.VISIBLE) {
+                show.visibility = View.INVISIBLE
             } else {
-                view.show.visibility = View.VISIBLE
+                show.visibility = View.VISIBLE
             }
         }
 
-        val Poland = LatLngBounds(LatLng(47.0, 14.0), LatLng(56.5, 24.3))
-
-        view.st.setOnClickListener {
+        st.setOnClickListener {
             SENSORNAME = "ST"
             refresh()
         }
-        view.co.setOnClickListener {
+        co.setOnClickListener {
             SENSORNAME = "CO"
             refresh()
         }
-        view.pm10.setOnClickListener {
+        pm10.setOnClickListener {
             SENSORNAME = "PM10"
             refresh()
         }
-        view.pm25.setOnClickListener {
+        pm25.setOnClickListener {
             SENSORNAME = "PM2.5"
             refresh()
         }
-        view.no2.setOnClickListener {
+        no2.setOnClickListener {
             SENSORNAME = "NO2"
             refresh()
         }
-        view.so2.setOnClickListener {
+        so2.setOnClickListener {
             SENSORNAME = "SO2"
             refresh()
         }
-        view.o3.setOnClickListener {
+        o3.setOnClickListener {
             SENSORNAME = "O3"
             refresh()
         }
-        view.c6h6.setOnClickListener {
+        c6h6.setOnClickListener {
             SENSORNAME = "C6H6"
             refresh()
         }
+        fab.setOnClickListener {
+            val location = CameraUpdateFactory.newLatLngBounds(polandCoordinates, 0)
+            googleMap.animateCamera(location);
+        }
+        compositeDisposable.add(loadingEvents.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if (it) {
+                    googleMap.clear()
+                    setMarkerOnMap()
+                }
+            }, { it.printStackTrace() })
+        )
 
-        setMapFragment(Poland)
         Handler().postDelayed(Runnable {
-            getAllData();
+            setMarkerOnMap()
             if (context != null) {
                 RelativeLoader.visibility = View.GONE
             }
 
-
         }, 1800)
-        view.fab.setOnClickListener(
-            View.OnClickListener {
-                val location = CameraUpdateFactory.newLatLngBounds(Poland, 0)
-                // googleMap.moveCamera(location)
-                googleMap.animateCamera(location);
-            }
-        )
-
-
     }
 
     private fun refresh() {
-//        var frg: Fragment?
-//        frg = fragmentManager!!.findFragmentByTag("SOMETAG")
-//        val ft: FragmentTransaction =
-//            fragmentManager!!.beginTransaction()
-//        frg?.let { ft.detach(it) }
-//        frg?.let { ft.attach(it) }
-//        ft.commit()
+        googleMap.clear()
+        pomiar.text = SENSORNAME
+        if (show.visibility == View.VISIBLE) {
+            show.visibility = View.INVISIBLE
+        } else {
+            show.visibility = View.VISIBLE
+        }
+        setMarkerOnMap()
     }
 
     @SuppressLint("MissingPermission")
-    private fun setMapFragment(Poland: LatLngBounds) {
+    override fun setMapFragment() {
         sensorIDListNotStatic = ArrayList<String>()
         mapFragment = childFragmentManager.findFragmentById(R.id.fragment) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
@@ -138,7 +168,6 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
             googleMap.isMyLocationEnabled = true
             googleMap.setOnMapClickListener {
                 rel.visibility = View.GONE
-
             }
             googleMap.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
 
@@ -153,40 +182,35 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
 
                     for (findAll in stationList) {
 
-                        if (findAll.id == marker?.getSnippet()?.toInt()) {
+                        if (findAll.id == marker?.snippet?.toInt()) {
                             rel.visibility = View.VISIBLE
 
                             googleMap.setOnInfoWindowClickListener {
                             }
 
                             choose.setOnClickListener {
-                                val myPreference: MyPreference = MyPreference(requireContext())
+                                val myPreference = MyPreference(requireContext())
                                 myPreference.setID(marker?.getSnippet())
                                 myPreference.setSTATION_NAME(findAll.stationName)
                                 myPreference.setSTATION_STREET(findAll.addressStreet)
                                 myPreference.setSTATION_PROVINCE(findAll.city.commune.provinceName)
-                                // myPreference.setSENSORID(sensorId)
                                 sensorIDList.clear()
                                 sensorIDList = sensorIDListNotStatic
-
-//                                getFragmentManager()?.beginTransaction()
-//                                    ?.replace(R.id.fragment, StatsFragment(), "SOMETAG")?.commit();
-
+                                navEvents.onNext(NavEvent(NavEvent.Destination.StatsFragment))
                                 Toast.makeText(activity, "Wybrano stację", Toast.LENGTH_LONG).show()
 
                             }
 
                             getDataStationSensor(findAll.id.toString())
-                            myContentView.name.setText(findAll.stationName)
-                            myContentView.provinceName.setText(findAll.city.commune.provinceName)
-                            myContentView.adressStreet.setText(findAll.addressStreet)
-                            myContentView.jakosc.setText(marker?.getTitle())
 
-
+                            myContentView.name.text = findAll.stationName
+                            myContentView.provinceName.text = findAll.city.commune.provinceName
+                            myContentView.adressStreet.text = findAll.addressStreet
+                            myContentView.jakosc.text = marker?.title
                             var color: Int =
                                 R.color.colorbdb
 
-                            when (marker?.getTitle()) {
+                            when (marker?.title) {
                                 "Bardzo dobry" -> {
                                     color =
                                         R.color.colorbdb
@@ -216,10 +240,9 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
                                         R.color.colorndst
                                 }
                             }
-                            myContentView.jakosc.setTextColor(resources.getColor(color))
-                            break;
+                            myContentView.jakosc.setTextColor(resources.getColor(color, null))
+                            break
                         }
-//                        findAll.stationName
 
                     }
 
@@ -227,7 +250,6 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
                 }
 
             })
-
             try {
                 val success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
@@ -242,15 +264,11 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
 
             }
 
-            //  googleMap.setMaxZoomPreference(17.0f)
-            //  googleMap.maxZoomLevel
-
             googleMap.setMinZoomPreference(5.4f)
 
             googleMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
-
                 // Permission to access the location is missing. Show rationale and request permission
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(Poland, 0))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(polandCoordinates, 0))
             })
 
 
@@ -263,12 +281,12 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
         vectorDrawable!!.setBounds(
             0,
             0,
-            vectorDrawable.getIntrinsicWidth(),
-            vectorDrawable.getIntrinsicHeight()
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
         );
         var bitmap = Bitmap.createBitmap(
-            vectorDrawable.getIntrinsicWidth(),
-            vectorDrawable.getIntrinsicHeight(),
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
             Bitmap.Config.ARGB_8888
         );
         var canvas = Canvas(bitmap);
@@ -276,426 +294,202 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    private fun getAllData() {
-        for (FindAll in stationList) {
+    override fun setMarkerOnMap() {
+        for (allStation in stationList) {
             var drawable: Int =
                 R.drawable.circle
             for (modelIndex in modelIndexList)
-                if (modelIndex.id.equals(FindAll.id)) {
+                if (modelIndex.id.equals(allStation.id)) {
                     when (SENSORNAME) {
                         "PM10" -> {
                             if (modelIndex.pm10IndexLevel != null) {
-                                when (modelIndex.pm10IndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.pm10IndexLevel.id)
                             }
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.pm10IndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.pm10IndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.pm10IndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
                         }
                         "ST" -> {
                             if (modelIndex.stIndexLevel != null) {
-                                when (modelIndex.stIndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.stIndexLevel.id)
                             }
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.stIndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.stIndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.stIndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
                         }
                         "PM2.5" -> {
                             if (modelIndex.pm25IndexLevel != null) {
-                                when (modelIndex.pm25IndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.pm25IndexLevel.id)
                             }
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.pm25IndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.pm25IndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.pm25IndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
                         }
                         "CO" -> {
                             if (modelIndex.coIndexLevel != null) {
-                                when (modelIndex.coIndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.coIndexLevel.id)
                             }
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.coIndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.coIndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.coIndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
                         }
                         "NO2" -> {
                             if (modelIndex.no2IndexLevel != null) {
-                                when (modelIndex.no2IndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.no2IndexLevel.id)
                             }
 
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.no2IndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.no2IndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.no2IndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
                         }
                         "SO2" -> {
                             if (modelIndex.so2IndexLevel != null) {
-                                when (modelIndex.so2IndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.so2IndexLevel.id)
                             }
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.so2IndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.so2IndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.so2IndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
                         }
                         "C6H6" -> {
                             if (modelIndex.c6h6IndexLevel != null) {
-                                when (modelIndex.c6h6IndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.c6h6IndexLevel.id)
                             }
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.c6h6IndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.c6h6IndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.c6h6IndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
                         }
                         "O3" -> {
                             if (modelIndex.o3IndexLevel != null) {
-                                when (modelIndex.o3IndexLevel.id) {
-                                    0 -> {
-                                        drawable =
-                                            R.drawable.circle
-                                    }
-                                    1 -> {
-                                        drawable =
-                                            R.drawable.circle2
-                                    }
-                                    2 -> {
-                                        drawable =
-                                            R.drawable.circle3
-                                    }
-                                    3 -> {
-                                        drawable =
-                                            R.drawable.circle4
-                                    }
-                                    4 -> {
-                                        drawable =
-                                            R.drawable.circle5
-                                    }
-                                    5 -> {
-                                        drawable =
-                                            R.drawable.circle6
-                                    }
-                                    else -> {
-                                        drawable =
-                                            R.drawable.circle7
-                                    }
-                                }
+                                drawable = drawableCircle(modelIndex.o3IndexLevel.id)
                             }
                             val location =
-                                LatLng(FindAll.gegrLat.toDouble(), FindAll.gegrLon.toDouble())
+                                LatLng(allStation.gegrLat.toDouble(), allStation.gegrLon.toDouble())
                             if (modelIndex.o3IndexLevel != null) {
                                 googleMap.addMarker(
 
-                                    MarkerOptions().position(location).title(modelIndex.o3IndexLevel.indexLevelName).snippet(
-                                        FindAll.id.toString()
-                                    ).icon(
-                                        context?.let {
-                                            bitmapDescriptorFromVector(
-                                                it,
-                                                drawable
-                                            )
-                                        }
-                                    )
+                                    MarkerOptions().position(location)
+                                        .title(modelIndex.o3IndexLevel.indexLevelName).snippet(
+                                            allStation.id.toString()
+                                        ).icon(
+                                            context?.let {
+                                                bitmapDescriptorFromVector(
+                                                    it,
+                                                    drawable
+                                                )
+                                            }
+                                        )
                                 )
 
                             }
@@ -707,155 +501,76 @@ class MapFragment @Inject constructor(): Fragment(R.layout.fragment_map) {
         }
     }
 
+    private fun drawableCircle(id: Int): Int {
+        var intDrawable: Int
+        when (id) {
+            0 -> {
+                intDrawable =
+                    R.drawable.circle
+            }
+            1 -> {
+                intDrawable =
+                    R.drawable.circle2
+            }
+            2 -> {
+                intDrawable =
+                    R.drawable.circle3
+            }
+            3 -> {
+                intDrawable =
+                    R.drawable.circle4
+            }
+            4 -> {
+                intDrawable =
+                    R.drawable.circle5
+            }
+            5 -> {
+                intDrawable =
+                    R.drawable.circle6
+            }
+            else -> {
+                intDrawable =
+                    R.drawable.circle7
+            }
+        }
+        return intDrawable
+    }
+
     private fun getDataStationSensor(id_select: String) {
-        MyVariables.sensorbyIDList = ArrayList<SensorbyID>()//inicjalizacja danych mapy
-
-
-        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-
-        api.getData(id_select).enqueue(object : Callback<List<SensorsName>> {
-
-            override fun onResponse(
-                call: Call<List<SensorsName>>,
-                response: Response<List<SensorsName>>
-            ) {
-
-                MyVariables.sensorsNameList = response.body()!!
+        sensorbyIDList = ArrayList<SensorbyID>()
+        compositeDisposable.add(
+            service.getDataRX(id_select).subscribeOn(Schedulers.single()).subscribe({
+                sensorsNameList = it
                 sensorIDListNotStatic.clear()
-                activity?.runOnUiThread {
-                    for (sensorsName in MyVariables.sensorsNameList) {
-
-                        sensorIDListNotStatic.add(sensorsName.id.toString())
-//                        if(sensorsName.param.paramCode.equals("PM10")){
-//                            sensorId=sensorsName.id.toString()
-//                        }
-
-                        api.getSensor(sensorsName.id.toString())
-                            .enqueue(object : Callback<SensorbyID> {
-
-                                override fun onResponse(
-                                    call: Call<SensorbyID>,
-                                    response: Response<SensorbyID>
-                                ) {
-                                    MyVariables.sensorbyIDList.add(response.body()!!)
-
-
-                                    if (MyVariables.sensorbyIDList.size > 0) {
-
-
-                                        activity?.runOnUiThread {
-                                            RecyclerView.apply {
-                                                layoutManager = LinearLayoutManager(
-                                                    activity,
-                                                    LinearLayoutManager.HORIZONTAL,
-                                                    false
-                                                )
-                                                adapter = SensorAdapter(
-                                                    MyVariables.sensorbyIDList,
-                                                    activity!!,
-                                                    onClick = object :
-                                                        SensorAdapter.OnItemClickListener {
-                                                        override fun onItemClick(model: SensorbyID) {
-
-                                                        }
-
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
+                for (sensorsName in sensorsNameList) {
+                    sensorIDListNotStatic.add(sensorsName.id.toString())
+                    compositeDisposable.add(
+                        service.getSensorRX(sensorsName.id.toString())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread()).subscribe({ sensor ->
+                                sensorbyIDList.add(sensor)
+                                if (sensorbyIDList.size > 0) {
+                                    adapterSensor.setData(sensorbyIDList)
                                 }
-
-                                override fun onFailure(call: Call<SensorbyID>, t: Throwable) {
-
-                                }
-
+                            }, { sensorTh ->
+                                sensorTh.printStackTrace()
                             })
-                    }
+                    )
                 }
-
-            }
-
-            override fun onFailure(call: Call<List<SensorsName>>, t: Throwable) {
-
-            }
-
-        })
+            }, {
+                it.printStackTrace()
+            })
+        )
     }
 
 
     override fun onDestroyView() {
+        compositeDisposable.dispose()
         super.onDestroyView()
         if (googleMap != null) {
             googleMap.clear()
         }
     }
-//    private fun getDataFromApi() {
-//
-//        val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
-//        api.findAll().enqueue(object : Callback<List<FindAll>> {
-//            override fun onResponse(call: Call<List<FindAll>>, response: Response<List<FindAll>>) {
-//
-//                stationList = response.body()!!
-//                sizedApplication = stationList.size
-//                for (FindAll in stationList) {
-//
-//
-//                    api.getIndex(FindAll.id.toString()).enqueue(object : Callback<ModelIndex> {
-//
-//                        override fun onResponse(
-//                            call: Call<ModelIndex>,
-//                            response: Response<ModelIndex>
-//                        ) {
-//
-//                            modelIndexList.add(response.body()!!)
-//
-//                            //    Log.d("MainActivity1223:Code ", "Call  ${response.body()}")
-//
-//
-//                            Log.d("MainActivity:Code ", "Call  ${response.body()!!}")
-//                            iterator++;
-//                            println(iterator)
-//                            if (iterator == stationList.size) {
-//                                if (context != null) {
-//                                    getAllData();
-//
-//                                    //  Handler().postDelayed(Runnable {
-//
-//                                    RelativeLoader.visibility = View.GONE
-//
-//                                    //  }, 0)
-//                                }
-//                            }
-//                            var pr: Double =
-//                                Math.round(iterator / stationList.size.toDouble() * 100.0)
-//                                    .toDouble()
-//                            activity?.runOnUiThread {
-//                                progress.text = pr.toInt().toString() + "%";
-//                            }
-//
-//                        }
-//
-//                        override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
-//                            Log.d("MainActivity1313x:Code ", "Call  ${t.message}")
-//
-//                        }
-//
-//                    })
-//
-//                }
-//
-//            }
-//
-//            override fun onFailure(call: Call<List<FindAll>>, t: Throwable) {
-//                Log.d("MainActivity1313Code", "Call  ${t.message}")
-//
-//                RelativeLoader.visibility = View.GONE
-//            }
-//
-//
-//        })
-//    }
 }
 
 

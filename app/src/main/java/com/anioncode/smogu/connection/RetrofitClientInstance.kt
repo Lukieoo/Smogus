@@ -1,13 +1,8 @@
-package com.anioncode.retrofit2
+package com.anioncode.smogu.connection
 
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.security.cert.CertificateException
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 
 class RetrofitClientInstance {

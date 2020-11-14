@@ -10,15 +10,26 @@ import com.anioncode.smogu.model.ModelSensorId.SensorbyID
 import com.anioncode.smogu.R
 import kotlinx.android.synthetic.main.item_pomiar.view.*
 
-class SensorAdapter(
-    val data: ArrayList<SensorbyID>,
+open class SensorAdapter(
     val context: Context,
     private var onClick: OnItemClickListener
 ) : RecyclerView.Adapter<ViewHolder>() {
 
-    // Gets the number of animals in the list
+    private lateinit var data: ArrayList<SensorbyID>
+
+    fun setData(data: ArrayList<SensorbyID>) {
+        this.data = data
+        notifyDataSetChanged()
+    }
+
+    // Gets the number of sensor in the list
     override fun getItemCount(): Int {
-        return data.size
+
+        return if (::data.isInitialized) {
+            data.size
+        } else {
+            0
+        }
     }
 
     interface OnItemClickListener {
@@ -27,7 +38,9 @@ class SensorAdapter(
 
     // Inflates the item views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_pomiar, parent, false))
+        return ViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.item_pomiar, parent, false)
+        )
     }
 
     // Binds each animal in the ArrayList to a view

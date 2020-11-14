@@ -16,5 +16,8 @@ class EventModule {
     @Singleton
     fun providesNavEvents(): PublishProcessor<NavEvent> = PublishProcessor.create()
 
+    @Provides
+    @Singleton
+    fun providesLoadEvents(): PublishProcessor<Boolean> = PublishProcessor.create()
 
 }

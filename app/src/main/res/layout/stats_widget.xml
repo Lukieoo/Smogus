@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhiteWithOpacity"
+    android:background="@color/colorNavOpacity"
 
     android:padding="5dp">
 
@@ -10,8 +10,8 @@
     android:layout_alignParentEnd="true"
     android:layout_above="@id/line"
     android:src="@drawable/icon"
-    android:layout_width="20dp"
-    android:layout_height="20dp"/>
+    android:layout_width="30dp"
+    android:layout_height="30dp"/>
     <LinearLayout
         android:id="@+id/line"
         android:gravity="center"
@@ -23,10 +23,8 @@
         android:orientation="vertical"
         android:padding="5dp">
 
-
-
             <TextView
-
+                android:textColor="@color/colorWhite"
                 android:id="@+id/nameStation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -38,7 +36,7 @@
 
 
             <TextView
-
+                android:padding="5dp"
                 android:id="@+id/nameLevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -48,20 +46,18 @@
                 android:textColor="@color/colorbdb"
                 android:textStyle="bold"
                 android:text="" />
+        <TextView
+            android:textColor="@color/colorWhite"
+            android:textSize="10sp"
+            android:id="@+id/dataStation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/sans_light"
+            android:maxLines="1"
+            android:text="" />
 
     </LinearLayout>
-    <!--    <TextView-->
-    <!--        android:id="@+id/appwidget_text"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_centerHorizontal="true"-->
-    <!--        android:layout_centerVertical="true"-->
-    <!--        android:layout_margin="8dp"-->
-    <!--        android:background="#09C"-->
-    <!--        android:contentDescription="@string/appwidget_text"-->
-    <!--        android:text="@string/appwidget_text"-->
-    <!--        android:textColor="#ffffff"-->
-    <!--        android:textSize="24sp"-->
-    <!--        android:textStyle="bold|italic" />-->
+
 
 </RelativeLayout>

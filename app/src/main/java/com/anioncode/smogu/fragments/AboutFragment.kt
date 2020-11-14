@@ -15,20 +15,26 @@ import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.fragment_about.*
 import javax.inject.Inject
 
-/**
- * A simple [Fragment] subclass.
- */
+
 class AboutFragment @Inject constructor() : Fragment(R.layout.fragment_about) {
-
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        //google admob init
+        googleAdmob()
+        //About me info
+        infoFragment()
+    }
+
+    private fun googleAdmob() {
         MobileAds.initialize(activity) {}
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
+    }
+
+    private fun infoFragment() {
         val versionName: String = BuildConfig.VERSION_NAME
-        title.setText("Wersja $versionName")
+        title.text = "Wersja $versionName"
         buttonsend.setOnClickListener(View.OnClickListener { v: View? ->
             val emailIntent = Intent(
                 Intent.ACTION_SENDTO, Uri.fromParts(

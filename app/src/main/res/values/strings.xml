@@ -10,6 +10,7 @@
 
     <string name="welcome_info">Witaj w aplikacji \'Smoguś\'  przejdź do mapy i wybierz swoją stację \uD83D\uDE00</string>
     <string name="later">Później</string>
+    <string name="map">"Mapa"</string>
     <string name="connection">Brak połączenia</string>
     <string name="action">Action</string>
 </resources>

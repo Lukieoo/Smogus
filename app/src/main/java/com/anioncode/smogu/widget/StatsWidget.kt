@@ -7,10 +7,9 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
-import android.util.Log
 import android.widget.RemoteViews
 import com.anioncode.retrofit2.ApiService
-import com.anioncode.retrofit2.RetrofitClientInstance
+import com.anioncode.smogu.connection.RetrofitClientInstance
 import com.anioncode.smogu.CONST.MyPreference
 import com.anioncode.smogu.model.ModelIndex.ModelIndex
 import com.anioncode.smogu.R
@@ -42,6 +41,7 @@ class StatsWidget : AppWidgetProvider() {
         // Enter relevant functionality for when the last widget is disabled
     }
 }
+
 lateinit var modelIndex: ModelIndex
 lateinit var myPreference: MyPreference
 internal fun updateAppWidget(
@@ -68,15 +68,20 @@ internal fun updateAppWidget(
         pending
     )
 
-    getDataStation(context,views,appWidgetManager,appWidgetId)
+    getDataStation(context, views, appWidgetManager, appWidgetId)
     appWidgetManager.updateAppWidget(appWidgetId, views)
 
 }
 
-private fun getDataStation(context: Context,views:RemoteViews, appWidgetManager: AppWidgetManager,appWidgetId: Int) {
+private fun getDataStation(
+    context: Context,
+    views: RemoteViews,
+    appWidgetManager: AppWidgetManager,
+    appWidgetId: Int
+) {
     val api = RetrofitClientInstance.getRetrofitInstance()!!.create(ApiService::class.java)
 
-    api.getIndex(if (!myPreference.getID().toString().equals("")) myPreference.getID().toString() else "14")
+    api.getIndex(if (myPreference.getID() != "") myPreference.getID().toString() else "14")
         .enqueue(object : Callback<ModelIndex> {
 
             override fun onResponse(
@@ -88,19 +93,20 @@ private fun getDataStation(context: Context,views:RemoteViews, appWidgetManager:
                 modelIndex = response.body()!!
                 var nameLevel: String = ""
 
-                views.setTextViewText(R.id.nameLevel, "esx")
-                    color = pairColor(modelIndex.stIndexLevel.id)
-                    nameLevel = modelIndex.stIndexLevel.indexLevelName
+                views.setTextViewText(R.id.nameLevel, "")
 
-                    views.setTextViewText(R.id.nameLevel, nameLevel)
-                  views.setTextColor(R.id.nameLevel,context.resources.getColor(color))
+                color = pairColor(modelIndex.stIndexLevel.id)
+                nameLevel = modelIndex.stIndexLevel.indexLevelName
+
+                views.setTextViewText(R.id.nameLevel, nameLevel)
+                views.setTextColor(R.id.nameLevel, context.resources.getColor(color, null))
+                views.setTextViewText(R.id.dataStation, modelIndex.stCalcDate)
                 appWidgetManager.updateAppWidget(appWidgetId, views)
 
 
             }
 
             override fun onFailure(call: Call<ModelIndex>, t: Throwable) {
-                Log.d("MainActivity1313x: ", "Call  ${t.message}")
                 views.setTextViewText(R.id.nameLevel, "XDs")
             }
 
